@@ -3,8 +3,18 @@ library(tidyverse)
 library(tidytext)
 
 # Import data
-df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv")
-df_test <- read_csv("data/cleaned/liwc_results/df_test_liwc.csv")
+df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv") %>%
+  rename(temp_id = `Source (A)`, text = `Source (B)`, dysphoria = `Source (C)`) %>%
+  rename(function_liwc = `function`) %>%
+  filter(temp_id != "temp_id") %>%
+  mutate(dysphoria = as.integer(dysphoria))
+
+df_test <- read_csv("data/cleaned/liwc_results/df_test_liwc.csv") %>%
+  rename(temp_id = A, text = B, dysphoria = C) %>%
+  rename(function_liwc = `function`) %>%
+  filter(temp_id != "temp_id") %>%
+  mutate(dysphoria = as.integer(dysphoria))
+
 dsm5 <- read_csv("data/dsm5_gender_dysphoria.csv")
 
 # Load stop words
