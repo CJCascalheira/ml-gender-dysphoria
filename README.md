@@ -7,8 +7,11 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
 
 ## Features
 * **Clinical Keywords**. Taken from the top five non-common (e.g., "individuals", "female") keywords featured in the DSM-5.
+  * *n_features* += 1.
 * **Mental Health Distress**
 * **Word Embeddings**
 * **Psycholinguistic Attributes**. Taken from the Linguistic Inquiry and Word Count (LIWC) lexicon.
-* **Sentiment**
+  * *n_features* += 93.
+* **Sentiment**. Valence of the sentiment of the Reddit post.
+  * *n_features* += 1.
 * **Top n-grams**
