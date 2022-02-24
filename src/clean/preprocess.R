@@ -55,14 +55,18 @@ df_test %>%
 df_test_1 <- df_test %>%
   mutate(text = str_trim(text)) %>%
   # Remove empty strings
-  filter(text != " ", text != "")
+  filter(text != " ", text != "") %>%
+  # Keep distinct Reddit posts
+  distinct(text, .keep_all = TRUE)
 
 # Check for empty strings
-df_test_1 %>%
+df_test_2 <- df_test_1 %>%
   mutate(str_len = str_length(text)) %>%
-  arrange(str_len)
+  arrange(str_len) %>%
+  # Keep Reddit posts with string lengths > 2
+  filter(str_len > 2)
 
 # WRITE TO FILE -----------------------------------------------------------
 
 write_csv(df_train, "data/cleaned/df_train_clean.csv")
-write_csv(df_test_1, "data/cleaned/df_test_clean.csv")
+write_csv(df_test_2, "data/cleaned/df_test_clean.csv")

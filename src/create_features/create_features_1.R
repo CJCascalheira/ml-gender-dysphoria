@@ -1,6 +1,7 @@
 # Dependencies
 library(tidyverse)
 library(tidytext)
+library(widyr)
 
 # Import data
 df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv") %>%
@@ -108,6 +109,50 @@ df_test2 <- df_test1 %>%
   # Rearrange the variables
   select(temp_id, text, dysphoria, everything())
 df_test2
+
+# TOP N-GRAMS -------------------------------------------------------------
+
+# Prepare the data
+train_merge <- df_train2 %>%
+  select(temp_id, text) %>%
+  mutate(set = rep("train", nrow(.)))
+
+df_full <- df_test2 %>%
+  select(temp_id, text) %>%
+  mutate(set = rep("test", nrow(.))) %>%
+  bind_rows(train_merge)
+
+# Top unigrams
+unigram_df <- df_full %>%
+  # Generate unigrams
+  unnest_tokens(word, text) %>%
+  # Remove stop words
+  anti_join(stop_words) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  # Clean up based on remainign stop words
+  mutate(
+    stop_word = if_else(str_detect(word, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0) 
+  ) %>%
+  # Remove remaining stop words
+  filter(stop_word == 0)
+
+# Select top 500 unigrams
+unigram_vector <- unigram_df[1:500, ]$word
+
+# Top bigrams
+bigram_df <- df_full %>%
+  # Generate bigrams
+  unnest_ngrams(bigram, text, n = 2) %>%
+  # Create a group linking the bigrams
+  mutate(group = 1:nrow(.)) %>%
+  # Separate the bigrams into two columns
+  separate(bigram, c("word1", "word2"))
+
+# Pointwise mutual information
+bigram_df %>%
+  gather(key = "position", value = "words", -temp_id, -set, -group) %>%
+  pairwise_pmi(item = words, feature = group, sort = TRUE)
 
 # SAVE DATAFRAMES WITH FEATURES -------------------------------------------
 

@@ -14,4 +14,5 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
   * *n_features* += 93.
 * **Sentiment**. Valence of the sentiment of the Reddit post.
   * *n_features* += 1.
-* **Top n-grams**
+* **Top n-grams**. Found the top n-grams (n = 1, 2, 3).
+  * *n_features* += 3.
