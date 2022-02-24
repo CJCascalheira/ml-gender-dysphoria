@@ -18,7 +18,9 @@ df_train <- df_train_raw %>%
   # Remove strange characters
   mutate(text = str_remove_all(text, "&amp;#x200B;|â€¦|&lt;|&gt;|â€œ|ðŸ¥´|ðŸ¥²|â„¢|ðŸ¤·â€|â™€ï¸|â€™|â€|&gt;|Ã©||ðŸ™|ðŸŒˆ|ðŸ")) %>%
   # Recode characters
-  mutate(text = recode(text, "&amp;" = "and", "Â´" = "'", "â€™" = "'"))
+  mutate(text = recode(text, "&amp;" = "and", "Â´" = "'", "â€™" = "'")) %>%
+  # Lowercase
+  mutate(text = str_to_lower(text))
 df_train
 
 # Check for empty strings
@@ -39,7 +41,9 @@ df_test <- df_test_raw %>%
   # Remove strange characters
   mutate(text = str_remove_all(text, "&amp;#x200B;|â€¦|&lt;|&gt;|â€œ|ðŸ¥´|ðŸ¥²|â„¢|ðŸ¤·â€|â™€ï¸|â€™|â€|&gt;|Ã©||ðŸ™|ðŸŒˆ|ðŸ")) %>%
   # Recode characters
-  mutate(text = recode(text, "&amp;" = "and", "Â´" = "'", "â€™" = "'"))
+  mutate(text = recode(text, "&amp;" = "and", "Â´" = "'", "â€™" = "'")) %>%
+  # Lowercase
+  mutate(text = str_to_lower(text))
 df_test
 
 # Check for empty strings
@@ -61,4 +65,4 @@ df_test_1 %>%
 # WRITE TO FILE -----------------------------------------------------------
 
 write_csv(df_train, "data/cleaned/df_train_clean.csv")
-write_csv(df_test_1, "data/cleaned/df_text_clean.csv")
+write_csv(df_test_1, "data/cleaned/df_test_clean.csv")
