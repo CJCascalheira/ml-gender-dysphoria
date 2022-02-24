@@ -3,8 +3,8 @@ library(tidyverse)
 library(tidytext)
 
 # Import data
-df_train <- read_csv("data/cleaned/df_train_clean.csv")
-df_test <- read_csv("data/cleaned/df_test_clean.csv")
+df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv")
+df_test <- read_csv("data/cleaned/liwc_results/df_test_liwc.csv")
 dsm5 <- read_csv("data/dsm5_gender_dysphoria.csv")
 
 # Load stop words
