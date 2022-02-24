@@ -38,3 +38,8 @@ df_test <- df_test %>%
   mutate(
     clinical_keywords = if_else(str_detect(text, regex("dysphor*|natal|disorder|assign*|develop*")), 1, 0)
   )
+
+# SAVE DATAFRAMES WITH FEATURES -------------------------------------------
+
+write_csv(df_train, "data/cleaned/with_features/df_train.csv")
+write_csv(df_test, "data/cleaned/with_features/df_test.csv")
