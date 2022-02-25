@@ -112,49 +112,121 @@ df_test2
 
 # TOP N-GRAMS -------------------------------------------------------------
 
-# Prepare the data
-train_merge <- df_train2 %>%
-  select(temp_id, text) %>%
-  mutate(set = rep("train", nrow(.)))
-
-df_full <- df_test2 %>%
-  select(temp_id, text) %>%
-  mutate(set = rep("test", nrow(.))) %>%
-  bind_rows(train_merge)
-
 # Top unigrams
-unigram_df <- df_full %>%
+unigram_df <- df_train2 %>%
+  # Select key columns
+  select(temp_id, text, dysphoria) %>%
   # Generate unigrams
-  unnest_tokens(word, text) %>%
+  unnest_tokens(word, text, drop = FALSE) %>%
   # Remove stop words
   anti_join(stop_words) %>%
-  count(word) %>%
+  count(dysphoria, word) %>%
   arrange(desc(n)) %>%
-  # Clean up based on remainign stop words
+  # Clean up based on remaining stop words
   mutate(
     stop_word = if_else(str_detect(word, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0) 
   ) %>%
   # Remove remaining stop words
-  filter(stop_word == 0)
+  filter(stop_word == 0) %>%
+  select(-stop_word)
 
-# Select top 500 unigrams
-unigram_vector <- unigram_df[1:500, ]$word
+# Term frequency, inverse document frequency (tf-idf)
+unigram_df1 <- unigram_df %>%
+  # Calculate tf-idf
+  bind_tf_idf(word, dysphoria, n) %>%
+  # Get top tf-idf of unigrams for dysphoria posts
+  arrange(desc(tf_idf)) %>%
+  filter(dysphoria == 1) 
 
-# Top bigrams
-bigram_df <- df_full %>%
-  # Generate bigrams
-  unnest_ngrams(bigram, text, n = 2) %>%
-  # Create a group linking the bigrams
-  mutate(group = 1:nrow(.)) %>%
+# Select top 100 unigrams
+unigram_vector <- unigram_df1[1:100, ]$word
+
+# Generate bigrams
+bigram_df <- df_train2 %>%
+  # Select key columns
+  select(temp_id, text, dysphoria) %>%
+  unnest_ngrams(bigram, text, n = 2, drop = FALSE) %>%
   # Separate the bigrams into two columns
-  separate(bigram, c("word1", "word2"))
+  separate(bigram, c("word1", "word2")) %>%
+  # Remove stop words
+  filter(!(word1 %in% stop_words$word)) %>%
+  filter(!(word2 %in% stop_words$word)) %>%
+  # Clean up based on remaining stop words
+  mutate(
+    stop_word1 = if_else(str_detect(word1, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0),
+    stop_word2 = if_else(str_detect(word2, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0)
+  ) %>%
+  filter(stop_word1 == 0, stop_word2 == 0) %>%
+  unite("bigram", c("word1", "word2"), sep = " ") %>%
+  # Count top bigrams
+  count(dysphoria, bigram) %>%
+  arrange(desc(n))
 
-# Pointwise mutual information
-bigram_df %>%
-  gather(key = "position", value = "words", -temp_id, -set, -group) %>%
-  pairwise_pmi(item = words, feature = group, sort = TRUE)
+# Term frequency, inverse document frequency (tf-idf)
+bigram_df1 <- bigram_df %>%
+  # Calculate tf-idf
+  bind_tf_idf(bigram, dysphoria, n) %>%
+  # Get top tf-idf of unigrams for dysphoria posts
+  arrange(desc(tf_idf)) %>%
+  filter(dysphoria == 1)
+
+# Select top 100 bigrams
+bigram_vector <- bigram_df1[1:100, ]$bigram
+
+# Generate trigrams
+trigram_df <- df_train2 %>%
+  # Select key columns
+  select(temp_id, text, dysphoria) %>%
+  unnest_ngrams(trigram, text, n = 3, drop = FALSE) %>%
+  # Separate into three columns
+  separate(trigram, c("word1", "word2", "word3"), sep = " ") %>%
+  # Remove stop words
+  filter(!word1 %in% stop_words$word,
+         !word2 %in% stop_words$word,
+         !word3 %in% stop_words$word) %>%
+  # Clean up based on remaining stop words
+  mutate(
+    stop_word1 = if_else(str_detect(word1, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0),
+    stop_word2 = if_else(str_detect(word2, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0) ,
+    stop_word3 = if_else(str_detect(word3, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0) 
+  ) %>%
+  # Remove contracted stop words
+  filter(
+    stop_word1 == 0,
+    stop_word2 == 0,
+    stop_word3 == 0
+  ) %>%
+  # Combine into trigrams
+  unite("trigram", c("word1", "word2", "word3"), sep = " ") %>%
+  count(dysphoria, trigram) %>%
+  arrange(desc(n))
+
+# View trigrams to clean for internet nonsense
+trigram_df1 <- trigram_df %>%
+  # Manual remove of nonsense
+  mutate(remove = if_else(str_detect(trigram, "^amp |amp | amp$|NA NA NA|poll$|jfe|_link|link_|playlist 3948ybuzmcysemitjmy9jg si|complete 3 surveys|gmail.com mailto:hellogoodbis42069 gmail.com|hellogoodbis42069 gmail.com mailto:hellogoodbis42069|comments 7n2i gay_marriage_debunked_in_2_minutes_obama_vs_alan|debatealtright comments 7n2i|gift card|amazon|action hirewheller csr|energy 106 fm|form sv_a3fnpplm8nszxfb width"), 1, 0)) %>%
+  filter(remove == 0) %>%
+  # Calculate tf-idf
+  bind_tf_idf(trigram, dysphoria, n) %>%
+  # Get top tf-idf of unigrams for dysphoria posts
+  arrange(desc(tf_idf)) %>%
+  filter(dysphoria == 1)
+
+# Select top 100 trigrams
+trigram_vector <- trigram_df1[1:100, ]$trigram
+
+# Combine all n-gram vectors
+ngram_vector <- c(unigram_vector, bigram_vector, trigram_vector)
+
+# Create features - training set
+df_train3 <- df_train2 %>%
+  mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
+
+# Create features - testing set
+df_test3 <- df_test2 %>%
+  mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
 
 # SAVE DATAFRAMES WITH FEATURES -------------------------------------------
 
-write_csv(df_train2, "data/cleaned/with_features/df_train.csv")
-write_csv(df_test2, "data/cleaned/with_features/df_test.csv")
+write_csv(df_train3, "data/cleaned/with_features/df_train.csv")
+write_csv(df_test3, "data/cleaned/with_features/df_test.csv")
