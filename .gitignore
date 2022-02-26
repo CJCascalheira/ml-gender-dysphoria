@@ -2,7 +2,8 @@
 # Raw data downloads
 # -----------------------------------------------------
 
-data/raw/google_bigquery/**
+data/raw/google_bigquery_trans/**
+data/raw/google_bigquery_science/**
 data/raw/pushshift/**
 
 # -----------------------------------------------------
