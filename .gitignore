@@ -4,6 +4,7 @@
 
 data/raw/google_bigquery_trans/**
 data/raw/google_bigquery_science/**
+data/raw/reddit_dysphoria/**
 data/raw/pushshift/**
 
 # -----------------------------------------------------
