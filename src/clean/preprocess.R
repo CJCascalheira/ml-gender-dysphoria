@@ -206,18 +206,9 @@ df_test_2 <- df_test_1 %>%
   arrange(str_len) %>%
   # Keep Reddit posts with string lengths > 2
   filter(str_len > 2) %>%
-  select(-str_len) %>%
-  mutate(temp_id = 1:nrow(.))
-
-# Randomly select 100,000
-test_sample <- sample(df_test_2$temp_id, 100000)
-
-# Filter for sample
-df_test_3 <- df_test_2 %>%
-  filter(temp_id %in% test_sample) %>%
-  select(-temp_id)
+  select(-str_len) 
 
 # WRITE TO FILE -----------------------------------------------------------
 
 write_csv(df_train, "data/cleaned/df_train_clean.csv")
-write_csv(df_test_3, "data/cleaned/df_test_clean.csv")
+write_csv(df_test_2, "data/cleaned/df_test_clean.csv")
