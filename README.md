@@ -22,3 +22,4 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
 
 * **Top n-grams**. Found the top n-grams (n = 1, 2, 3).
   * *n_features* += 3.
+  * After cleaning, found top 250 unigrams, 250 bigrams, and 100 trigrams (i.e., only 100 because trigrams used less than once after 100) based on ordering ngrams by tf_idf scores.

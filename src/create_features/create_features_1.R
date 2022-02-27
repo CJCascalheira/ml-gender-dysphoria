@@ -5,17 +5,24 @@ library(widyr)
 
 # Import data
 df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv") %>%
-  rename(temp_id = `Source (A)`, text = `Source (B)`, dysphoria = `Source (C)`) %>%
+  rename(text = `Source (A)`, dysphoria = `Source (B)`) %>%
   rename(function_liwc = `function`) %>%
-  filter(temp_id != "temp_id") %>%
-  mutate(dysphoria = as.integer(dysphoria))
+  mutate(dysphoria = as.integer(dysphoria)) %>%
+  # Create a temporary ID
+  mutate(temp_id = 1:nrow(.)) %>%
+  select(temp_id, everything())
 
 df_test <- read_csv("data/cleaned/liwc_results/df_test_liwc.csv") %>%
-  rename(temp_id = A, text = B, dysphoria = C) %>%
-  rename(function_liwc = `function`) %>%
-  filter(temp_id != "temp_id") %>%
-  mutate(dysphoria = as.integer(dysphoria))
+  rename(text = A, dysphoria = B) %>%
+  rename(function_liwc = `function`)
 
+df_test <- df_test[-1, ]  %>%
+  mutate(dysphoria = as.integer(dysphoria)) %>%
+  # Create a temporary ID
+  mutate(temp_id = 1:nrow(.)) %>%
+  select(temp_id, everything())
+
+# Import the DSM-5 text on gender dysphoria
 dsm5 <- read_csv("data/dsm5_gender_dysphoria.csv")
 
 # Load stop words
@@ -36,7 +43,7 @@ sentiment_df <- bind_rows(afinn, slangsd) %>%
 
 # Count features
 df_train %>%
-  select(-temp_id, -text, -dysphoria) %>%
+  select(-text, -dysphoria) %>%
   names() %>%
   length()
 
@@ -136,10 +143,14 @@ unigram_df1 <- unigram_df %>%
   bind_tf_idf(word, dysphoria, n) %>%
   # Get top tf-idf of unigrams for dysphoria posts
   arrange(desc(tf_idf)) %>%
-  filter(dysphoria == 1) 
+  filter(dysphoria == 1) %>%
+  # Remove words based on closed inspection of unigrams
+  mutate(remove = if_else(str_detect(word, regex("’s|’d|'s|	
+’ve|\\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lockdown|covid")), 1, 0)) %>%
+  filter(remove == 0)
 
-# Select top 100 unigrams
-unigram_vector <- unigram_df1[1:100, ]$word
+# Select top 250 unigrams
+unigram_vector <- unigram_df1[1:250, ]$word
 
 # Generate bigrams
 bigram_df <- df_train2 %>%
@@ -168,10 +179,14 @@ bigram_df1 <- bigram_df %>%
   bind_tf_idf(bigram, dysphoria, n) %>%
   # Get top tf-idf of unigrams for dysphoria posts
   arrange(desc(tf_idf)) %>%
-  filter(dysphoria == 1)
+  filter(dysphoria == 1) %>%
+  # Remove words based on closed inspection of unigrams
+  mutate(remove = if_else(str_detect(bigram, regex("’s|’d|'s|	
+’ve|\\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lockdown|covid|^ive |^lot |minutes ago")), 1, 0)) %>%
+  filter(remove == 0)
 
-# Select top 100 bigrams
-bigram_vector <- bigram_df1[1:100, ]$bigram
+# Select top 250 bigrams
+bigram_vector <- bigram_df1[1:250, ]$bigram
 
 # Generate trigrams
 trigram_df <- df_train2 %>%
@@ -204,13 +219,15 @@ trigram_df <- df_train2 %>%
 # View trigrams to clean for internet nonsense
 trigram_df1 <- trigram_df %>%
   # Manual remove of nonsense
-  mutate(remove = if_else(str_detect(trigram, "^amp |amp | amp$|NA NA NA|poll$|jfe|_link|link_|playlist 3948ybuzmcysemitjmy9jg si|complete 3 surveys|gmail.com mailto:hellogoodbis42069 gmail.com|hellogoodbis42069 gmail.com mailto:hellogoodbis42069|comments 7n2i gay_marriage_debunked_in_2_minutes_obama_vs_alan|debatealtright comments 7n2i|gift card|amazon|action hirewheller csr|energy 106 fm|form sv_a3fnpplm8nszxfb width"), 1, 0)) %>%
+  mutate(remove = if_else(str_detect(trigram, "\\d|ðÿ|^amp |amp | amp$|NA NA NA|poll$|jfe|_link|link_|playlist 3948ybuzmcysemitjmy9jg si|complete 3 surveys|gmail.com mailto:hellogoodbis42069 gmail.com|hellogoodbis42069 gmail.com mailto:hellogoodbis42069|comments 7n2i gay_marriage_debunked_in_2_minutes_obama_vs_alan|debatealtright comments 7n2i|gift card|amazon|action hirewheller csr|energy 106 fm|form sv_a3fnpplm8nszxfb width"), 1, 0)) %>%
   filter(remove == 0) %>%
   # Calculate tf-idf
   bind_tf_idf(trigram, dysphoria, n) %>%
   # Get top tf-idf of unigrams for dysphoria posts
   arrange(desc(tf_idf)) %>%
   filter(dysphoria == 1)
+
+View(trigram_df1)
 
 # Select top 100 trigrams
 trigram_vector <- trigram_df1[1:100, ]$trigram
