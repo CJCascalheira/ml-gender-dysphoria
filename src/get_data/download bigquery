@@ -1,0 +1,11 @@
+# Format for downloading from Google Big Query
+SELECT id,author,created_utc,selftext,title,score
+FROM `fh-bigquery.reddit_posts.2019*`
+WHERE subreddit = 'askscience'
+
+# Download for years 2016, 2017, 2018, 2019 from
+# r/askscience
+# r/ftm
+# r/MtF
+# r/NonBinary
+# r/trans

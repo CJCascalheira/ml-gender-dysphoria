@@ -227,8 +227,6 @@ trigram_df1 <- trigram_df %>%
   arrange(desc(tf_idf)) %>%
   filter(dysphoria == 1)
 
-View(trigram_df1)
-
 # Select top 100 trigrams
 trigram_vector <- trigram_df1[1:100, ]$trigram
 
