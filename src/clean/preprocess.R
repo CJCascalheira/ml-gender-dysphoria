@@ -2,7 +2,7 @@
 library(tidyverse)
 
 # Import
-df_train_raw <- read_csv("data/raw/df_train_raw.csv")
+df_truth_raw <- read_csv("data/raw/df_truth_raw.csv")
 
 # Import Big Query trans files
 my_csvs <- list.files("data/raw/google_bigquery_trans/")
@@ -40,7 +40,7 @@ set.seed(1234567)
 # COMBINE DATA: TRAINING DATA ---------------------------------------------
 
 # Create the training set
-df_train_dysphoria <- df_dysphoria %>%
+df_truth_dysphoria <- df_dysphoria %>%
   # Remove missing
   filter(!is.na(text)) %>%
   # Remove reddit-specific nonsense
@@ -53,7 +53,7 @@ df_train_dysphoria <- df_dysphoria %>%
   # Select the columns for merging
   select(text, dysphoria) %>%
   # Combine with manually coded data
-  bind_rows(df_train_raw[, c("text", "dysphoria")]) %>%
+  bind_rows(df_truth_raw[, c("text", "dysphoria")]) %>%
   mutate(
     # Remove unhelpful labels
     remove = if_else(str_detect(text, regex("selling|research|need mods|looking for mods|discord server|pm.*discord",
@@ -65,12 +65,12 @@ df_train_dysphoria <- df_dysphoria %>%
   select(-remove, -str_len)
   
 # Count the number of positive examples
-n_pos <- df_train_dysphoria %>%
+n_pos <- df_truth_dysphoria %>%
   filter(dysphoria == 1) %>%
   nrow()
 
 # Count the number of negative examples
-n_neg <- nrow(df_train_dysphoria) - n_pos
+n_neg <- nrow(df_truth_dysphoria) - n_pos
 
 # Total needed to supllement dataframe
 n_sup <- n_pos - n_neg
@@ -85,17 +85,17 @@ df_science1 <- df_science %>%
   filter(text != "[deleted]", text != "[removed]")
 
 # Balance the dataset with science data
-df_train_raw1 <- df_science1[1:n_sup, ] %>%
+df_truth_raw1 <- df_science1[1:n_sup, ] %>%
   # Add negative labels to all science posts
   mutate(dysphoria = rep(0, nrow(.))) %>%
   # Combine with dysphoria dataframe
-  bind_rows(df_train_dysphoria)
+  bind_rows(df_truth_dysphoria)
 
 # Shuffle the data
-df_train_raw2 <- df_train_raw1[sample(1:nrow(df_train_raw1)), ]
+df_truth_raw2 <- df_truth_raw1[sample(1:nrow(df_truth_raw1)), ]
 
 # Is the dataset balanced?
-df_train_raw2 %>%
+df_truth_raw2 %>%
   count(dysphoria)
 
 # COMBINE DATA: TESTING DATA ----------------------------------------------
@@ -114,7 +114,7 @@ df_bq_trans1 <- df_bq_trans %>%
   select(text, dysphoria) 
 
 # Clean data from Pushshift and combine with data from Big Query
-df_test_raw <- df_ps_trans[, "text"] %>%
+df_primary_raw <- df_ps_trans[, "text"] %>%
   # Remove missing
   filter(!is.na(text)) %>%
   # Remove reddit-specific nonsense
@@ -133,7 +133,7 @@ df_test_raw <- df_ps_trans[, "text"] %>%
 # CLEAN TRAINING DATA -----------------------------------------------------
 
 # Clean up test data
-df_train <- df_train_raw2 %>%
+df_truth <- df_truth_raw2 %>%
   # Remove links / URLs
   mutate(text = str_remove_all(text, " ?(f|ht)tp(s?)://(.*)[.][a-z]+")) %>%
   # Remove markdown links
@@ -154,17 +154,17 @@ df_train <- df_train_raw2 %>%
   ) %>%
   filter(str_len > 10) %>%
   select(-str_len)
-df_train
+df_truth
 
 # Check for empty strings
-df_train %>%
+df_truth %>%
   mutate(str_len = str_length(text)) %>%
   arrange(str_len)
 
 # CLEAN TESTING DATA ------------------------------------------------------
 
 # Clean up text data
-df_test <- df_test_raw %>%
+df_primary <- df_primary_raw %>%
   # Remove links / URLs
   mutate(text = str_remove_all(text, " ?(f|ht)tp(s?)://(.*)[.][a-z]+")) %>%
   # Remove markdown links
@@ -185,15 +185,15 @@ df_test <- df_test_raw %>%
   ) %>%
   filter(str_len > 10) %>%
   select(-str_len)
-df_test
+df_primary
 
 # Check for empty strings
-df_test %>%
+df_primary %>%
   mutate(str_len = str_length(text)) %>%
   arrange(str_len)
 
 # Clean up part 2
-df_test_1 <- df_test %>%
+df_primary_1 <- df_primary %>%
   mutate(text = str_trim(text)) %>%
   # Remove empty strings
   filter(text != " ", text != "") %>%
@@ -201,7 +201,7 @@ df_test_1 <- df_test %>%
   distinct(text, .keep_all = TRUE)
 
 # Check for empty strings
-df_test_2 <- df_test_1 %>%
+df_primary_2 <- df_primary_1 %>%
   mutate(str_len = str_length(text)) %>%
   arrange(str_len) %>%
   # Keep Reddit posts with string lengths > 2
@@ -210,5 +210,5 @@ df_test_2 <- df_test_1 %>%
 
 # WRITE TO FILE -----------------------------------------------------------
 
-write_csv(df_train, "data/cleaned/df_train_clean.csv")
-write_csv(df_test_2, "data/cleaned/df_test_clean.csv")
+write_csv(df_truth, "data/cleaned/df_truth_clean.csv")
+write_csv(df_primary_2, "data/cleaned/df_primary_clean.csv")

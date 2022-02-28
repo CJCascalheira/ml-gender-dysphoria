@@ -2,9 +2,9 @@
 Classifying gender dysphoria disclosures on Reddit using machine learning (ML) techniques.
 
 ## Data
-* **Training Set**. The df_train.csv is labeled. It has ~600 labels from human and the rest are from different subreddits. If from r/GenderDysphoria, then labeled 1; if from r/askscience, labeled 2.
+* **Training Set**. The df_truth.csv is labeled. It has ~600 labels from human and the rest are from different subreddits. If from r/GenderDysphoria, then labeled 1; if from r/askscience, labeled 2.
 
-* **Testing Set**. The df_test.csv is not yet labeled. However, we will develop an ML classifier to machine-label these data and then perform error analysis. For an example, see Saha et al. (2019). The testing dataset is comprised of posts from different transgender-specific subreddits.
+* **Testing Set**. The df_primary.csv is not yet labeled. However, we will develop an ML classifier to machine-label these data and then perform error analysis. For an example, see Saha et al. (2019). The testing dataset is comprised of posts from different transgender-specific subreddits.
 
 ## Features
 * **Clinical Keywords**. Taken from the top five non-common (e.g., "individuals", "female") keywords featured in the DSM-5.

@@ -4,7 +4,7 @@ library(tidytext)
 library(widyr)
 
 # Import data
-df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv") %>%
+df_truth <- read_csv("data/cleaned/liwc_results/df_truth_liwc.csv") %>%
   rename(text = `Source (A)`, dysphoria = `Source (B)`) %>%
   rename(function_liwc = `function`) %>%
   mutate(dysphoria = as.integer(dysphoria)) %>%
@@ -12,11 +12,11 @@ df_train <- read_csv("data/cleaned/liwc_results/df_train_liwc.csv") %>%
   mutate(temp_id = 1:nrow(.)) %>%
   select(temp_id, everything())
 
-df_test <- read_csv("data/cleaned/liwc_results/df_test_liwc.csv") %>%
+df_primary <- read_csv("data/cleaned/liwc_results/df_primary_liwc.csv") %>%
   rename(text = A, dysphoria = B) %>%
   rename(function_liwc = `function`)
 
-df_test <- df_test[-1, ]  %>%
+df_primary <- df_primary[-1, ]  %>%
   mutate(dysphoria = as.integer(dysphoria)) %>%
   # Create a temporary ID
   mutate(temp_id = 1:nrow(.)) %>%
@@ -42,7 +42,7 @@ sentiment_df <- bind_rows(afinn, slangsd) %>%
 # LIWC --------------------------------------------------------------------
 
 # Count features
-df_train %>%
+df_truth %>%
   select(-text, -dysphoria) %>%
   names() %>%
   length()
@@ -64,13 +64,13 @@ clinical_keywords <- dsm5 %>%
 clinical_keywords
 
 # Add features - train
-df_train1 <- df_train %>%
+df_truth1 <- df_truth %>%
   mutate(
     clinical_keywords = if_else(str_detect(text, regex("dysphor*|natal|disorder|assign*|develop*")), 1, 0)
   )
 
 # Add features - test
-df_test1 <- df_test %>%
+df_primary1 <- df_primary %>%
   mutate(
     clinical_keywords = if_else(str_detect(text, regex("dysphor*|natal|disorder|assign*|develop*")), 1, 0)
   )
@@ -78,7 +78,7 @@ df_test1 <- df_test %>%
 # SENTIMENT: VALENCE APPROACH ---------------------------------------------
 
 # Add features - train
-df_train2 <- df_train1 %>%
+df_truth2 <- df_truth1 %>%
   # Reduce df size
   select(temp_id, text) %>%
   # Tokenize Reddit post
@@ -92,13 +92,13 @@ df_train2 <- df_train1 %>%
   # Calculate total sentiment of post
   summarize(sentiment_valence = sum(value)) %>%
   # Join to main dataframe
-  left_join(df_train) %>%
+  left_join(df_truth) %>%
   # Rearrange the variables
   select(temp_id, text, dysphoria, everything())
-df_train2
+df_truth2
 
 # Add features - test
-df_test2 <- df_test1 %>%
+df_primary2 <- df_primary1 %>%
   # Reduce df size
   select(temp_id, text) %>%
   # Tokenize Reddit post
@@ -112,15 +112,15 @@ df_test2 <- df_test1 %>%
   # Calculate total sentiment of post
   summarize(sentiment_valence = sum(value)) %>%
   # Join to main dataframe
-  left_join(df_test) %>%
+  left_join(df_primary) %>%
   # Rearrange the variables
   select(temp_id, text, dysphoria, everything())
-df_test2
+df_primary2
 
 # TOP N-GRAMS -------------------------------------------------------------
 
 # Top unigrams
-unigram_df <- df_train2 %>%
+unigram_df <- df_truth2 %>%
   # Select key columns
   select(temp_id, text, dysphoria) %>%
   # Generate unigrams
@@ -153,7 +153,7 @@ unigram_df1 <- unigram_df %>%
 unigram_vector <- unigram_df1[1:250, ]$word
 
 # Generate bigrams
-bigram_df <- df_train2 %>%
+bigram_df <- df_truth2 %>%
   # Select key columns
   select(temp_id, text, dysphoria) %>%
   unnest_ngrams(bigram, text, n = 2, drop = FALSE) %>%
@@ -189,7 +189,7 @@ bigram_df1 <- bigram_df %>%
 bigram_vector <- bigram_df1[1:250, ]$bigram
 
 # Generate trigrams
-trigram_df <- df_train2 %>%
+trigram_df <- df_truth2 %>%
   # Select key columns
   select(temp_id, text, dysphoria) %>%
   unnest_ngrams(trigram, text, n = 3, drop = FALSE) %>%
@@ -234,14 +234,14 @@ trigram_vector <- trigram_df1[1:100, ]$trigram
 ngram_vector <- c(unigram_vector, bigram_vector, trigram_vector)
 
 # Create features - training set
-df_train3 <- df_train2 %>%
+df_truth3 <- df_truth2 %>%
   mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
 
 # Create features - testing set
-df_test3 <- df_test2 %>%
+df_primary3 <- df_primary2 %>%
   mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
 
 # SAVE DATAFRAMES WITH FEATURES -------------------------------------------
 
-write_csv(df_train3, "data/cleaned/with_features/df_train.csv")
-write_csv(df_test3, "data/cleaned/with_features/df_test.csv")
+write_csv(df_truth3, "data/cleaned/with_features/df_truth.csv")
+write_csv(df_primary3, "data/cleaned/with_features/df_primary.csv")
