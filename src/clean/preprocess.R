@@ -41,15 +41,16 @@ set.seed(1234567)
 
 # Create the training set
 df_truth_dysphoria <- df_dysphoria %>%
+  # Select columns
+  select(text, title) %>%
+  # Remove reddit-specific nonsense
+  filter(!text %in% c("[deleted]", "[removed]")) %>%
+  # Unite the title and text columns
+  unite(text, c(title, text), sep = " ") %>%
   # Remove missing
   filter(!is.na(text)) %>%
-  # Remove reddit-specific nonsense
-  filter(text != "[deleted]", text != "[removed]") %>%
-  rename(selftext = text) %>%
   # Add positive label for all posts in Gender Dysphoria subreddit
   mutate(dysphoria = rep(1, nrow(.))) %>%
-  # Unite the title and text columns
-  unite(text, c(title, selftext), sep = " ") %>%
   # Select the columns for merging
   select(text, dysphoria) %>%
   # Combine with manually coded data
@@ -78,11 +79,14 @@ n_sup <- n_pos - n_neg
 # Clean up the science data
 df_science1 <- df_science %>%
   distinct(selftext, .keep_all = TRUE) %>%
-  select(text = selftext) %>%
-  # Remove missing
-  filter(!is.na(text)) %>%
+  # Select columns
+  select(selftext, title) %>%
   # Remove reddit-specific nonsense
-  filter(text != "[deleted]", text != "[removed]")
+  filter(!selftext %in% c("[deleted]", "[removed]")) %>%
+  # Unite the title and text columns
+  unite(text, c(title, selftext), sep = " ") %>%
+  # Remove missing
+  filter(!is.na(text))
 
 # Balance the dataset with science data
 df_truth_raw1 <- df_science1[1:n_sup, ] %>%
@@ -108,23 +112,25 @@ df_truth_raw2 %>%
 
 # Clean the data from Big Query 
 df_bq_trans1 <- df_bq_trans %>%
-  # Remove missing
-  filter(!is.na(selftext)) %>%
+  # Select columns
+  select(id, selftext, title) %>%
   # Remove reddit-specific nonsense
-  filter(selftext != "[deleted]", selftext != "[removed]") %>%
-  # Add no label
-  mutate(dysphoria = rep(NA_character_, nrow(.))) %>%
+  filter(!selftext %in% c("[deleted]", "[removed]")) %>%
   # Unite the title and text columns
   unite(text, c(title, selftext), sep = " ") %>%
+  # Remove missing
+  filter(!is.na(text)) %>%
+  # Add no label
+  mutate(dysphoria = rep(NA_character_, nrow(.))) %>%
   # Select the columns for merging
   select(text, dysphoria) 
 
 # Clean data from Pushshift and combine with data from Big Query
 df_primary_raw <- df_ps_trans[, "text"] %>%
+  # Remove reddit-specific nonsense
+  filter(!text %in% c("[deleted]", "[removed]")) %>%
   # Remove missing
   filter(!is.na(text)) %>%
-  # Remove reddit-specific nonsense
-  filter(text != "[deleted]", text != "[removed]") %>%
   # Add no label
   mutate(dysphoria = rep(NA_character_, nrow(.))) %>%
   # Combine with Big Query
