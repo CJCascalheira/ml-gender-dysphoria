@@ -8,6 +8,7 @@ data/raw/reddit_dysphoria/**
 data/raw/pushshift/**
 data/cleaned/liwc_results/**
 data/raw/dass/**
+data/cleaned/dass/**
 data/cleaned/df_primary_clean.csv
 
 # -----------------------------------------------------
