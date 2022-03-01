@@ -2,6 +2,7 @@
 library(tidyverse)
 library(tidytext)
 library(widyr)
+library(topicmodels)
 
 # Import data
 df_truth <- read_csv("data/cleaned/liwc_results/df_truth_liwc.csv") %>%
@@ -241,6 +242,56 @@ df_truth3 <- df_truth2 %>%
 df_primary3 <- df_primary2 %>%
   mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
 
+# TOPIC MODELING WITH LDA -------------------------------------------------
+
+# For help, see https://www.tidytextmining.com/topicmodeling.html
+
+# Ran this code, but the topics were not helpful---too similar
+
+# Select only positive examples of gender dysphoria
+#df_truth3_pos <- df_truth3 %>%
+#  filter(dysphoria == 1) %>%
+#  select(temp_id, text)
+
+# Create a document term matrix
+#word_counts <- df_truth3_pos %>%
+  # Create tokens for each Reddit post
+#  unnest_tokens(word, text) %>%
+  # Remove common stop words
+#  anti_join(stop_words) %>%
+  # Clean up based on remaining stop words
+#  mutate(
+#    stop_word = if_else(str_detect(word, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0)
+#  ) %>%
+  # Remove contraction keywords
+#  filter(stop_word == 0) %>%
+#  select(-stop_word) %>%
+#  count(temp_id, word, sort = TRUE) 
+#word_counts
+
+# Transform into a DTM
+#df_truth_dtm <- word_counts %>%
+#  cast_dtm(temp_id, word, n)
+#df_truth_dtm
+
+# Execute Latent Dirichlet Allocation (LDA) with k = 4
+#df_truth_lda4 <- LDA(df_truth_dtm, k = 2, control = list(seed = 1234567))
+
+# Get the topics
+#lda4_topics <- tidy(df_truth_lda4, matrix = "beta")
+
+# Visualize topics
+#lda4_topics %>%
+#  group_by(topic) %>%
+#  slice_max(beta, n = 5) %>% 
+#  ungroup() %>%
+#  arrange(topic, -beta) %>%
+#  mutate(term = reorder_within(term, beta, topic)) %>%
+#  ggplot(aes(beta, term, fill = factor(topic))) +
+#  geom_col(show.legend = FALSE) +
+#  facet_wrap(~ topic, scales = "free") +
+#  scale_y_reordered()
+  
 # SAVE DATAFRAMES WITH FEATURES -------------------------------------------
 
 write_csv(df_truth3, "data/cleaned/with_features/df_truth.csv")

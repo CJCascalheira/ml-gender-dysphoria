@@ -72,7 +72,7 @@ n_pos <- df_truth_dysphoria %>%
 # Count the number of negative examples
 n_neg <- nrow(df_truth_dysphoria) - n_pos
 
-# Total needed to supllement dataframe
+# Total needed to supplement dataframe
 n_sup <- n_pos - n_neg
 
 # Clean up the science data
@@ -97,6 +97,12 @@ df_truth_raw2 <- df_truth_raw1[sample(1:nrow(df_truth_raw1)), ]
 # Is the dataset balanced?
 df_truth_raw2 %>%
   count(dysphoria)
+
+# Get example of each class
+df_truth_raw2 %>%
+  group_by(dysphoria) %>%
+  sample_n(size = 2) %>%
+  write_csv("data/results/ground_truth_examples.csv")
 
 # COMBINE DATA: TESTING DATA ----------------------------------------------
 
