@@ -13,8 +13,21 @@ WHERE subreddit = 'askscience'
 # r/trans
 
 # For DASS classifier, download for years 2016, 2017, 2018, 2019 from
+# DASS CONDITIONS
 # r/depression
 # r/Anxiety
 # r/SuicideWatch
 # r/Stress
+
+# CONTROL CONDITIONS
 # r/movies
+# r/aww
+
+# For DASS classifier control conditions, downloaded for 2018 / 2019 from
+# r/funny
+# r/AskReddit
+# r/gaming
+# r/Music
+# r/worldnews
+# r/todayilearned
+# r/news

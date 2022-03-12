@@ -10,10 +10,11 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
 * **Clinical Keywords**. Taken from the top five non-common (e.g., "individuals", "female") keywords featured in the DSM-5.
   * *n_features* += 1.
 
-* **Mental Health Distress**. Generated from a classifier trained on data from subreddits, similar to Saha et al. (2019). Labels from this classifier used as features.
-  * *n_features* += 1.
+* **Mental Health Distress**. Generated from a classifier trained on data from subreddits, similar to the DASS approach in Saha et al. (2019). Labels from this classifier used as features.
+  * *n_features* += 4.
+  * *Types of features*. Depression, anxiety, stress, suicide.
 
-* **Word Embeddings**
+* **Word Embeddings**.
 
 * **Psycholinguistic Attributes**. Taken from the Linguistic Inquiry and Word Count (LIWC) lexicon.
   * *n_features* += 93.
@@ -22,5 +23,5 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
   * *n_features* += 1.
 
 * **Top n-grams**. Found the top n-grams (n = 1, 2, 3).
-  * *n_features* += 1.
+  * *n_features* += 500.
   * After cleaning, found top 250 unigrams, 250 bigrams, and 100 trigrams (i.e., only 100 because trigrams used less than once after 100) based on ordering ngrams by tf_idf scores.

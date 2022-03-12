@@ -2,7 +2,7 @@
 library(tidyverse)
 library(tidytext)
 library(widyr)
-library(topicmodels)
+#library(topicmodels)
 
 # Import data
 df_truth <- read_csv("data/cleaned/liwc_results/df_truth_liwc.csv") %>%

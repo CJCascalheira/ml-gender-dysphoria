@@ -18,26 +18,42 @@ df_pos <- bind_rows(files_list, .id = "column_label") %>%
   select(id, subreddit, everything()) %>%
   mutate(subreddit = str_extract(subreddit, regex("(?<=data/raw/dass/pos_examples/bigquery_)\\w*(?=_\\d*.csv)")))
 
-# Import BigQuery negative DASS 1 files
+# Import BigQuery negative DASS 9 subreddits
 my_csvs <- list.files("data/raw/dass/neg_examples/")
 my_files1 <- paste0("data/raw/dass/neg_examples/", my_csvs)
+files_list <- lapply(my_files1, read_csv)
+
+# Combine data frames
+df_control <- bind_rows(files_list, .id = "column_label") %>%
+  select(-column_label)
+
+# Import BigQuery negative DASS 1 files
+my_csvs <- list.files("data/raw/google_bigquery_science/")
+my_files1 <- paste0("data/raw/google_bigquery_science/", my_csvs)
 files_list <- lapply(my_files1, read_csv)
 
 # Combine data frames
 df_science <- bind_rows(files_list, .id = "column_label") %>%
   select(-column_label)
 
-# Import BigQuery negative DASS 2 files
-my_csvs <- list.files("data/raw/google_bigquery_science/")
-my_files1 <- paste0("data/raw/google_bigquery_science/", my_csvs)
-files_list <- lapply(my_files1, read_csv)
-
-# Combine data frames
-df_movies <- bind_rows(files_list, .id = "column_label") %>%
-  select(-column_label)
-
 # Combined negative files
-df_neg <- bind_rows(df_movies, df_science)
+df_neg <- bind_rows(df_control, df_science) %>%
+  # Select columns
+  select(id, selftext, title) %>%
+  # Remove reddit-specific nonsense
+  filter(!selftext %in% c("[deleted]", "[removed]")) %>%
+  # Unite the title and text columns
+  unite(text, c(title, selftext), sep = " ") %>%
+  # Remove missing
+  filter(!is.na(text)) %>%
+  # Remove missing
+  mutate(
+    # Remove posts with no characters
+    str_len = str_length(text)
+  ) %>%
+  filter(str_len > 10) %>%
+  select(-str_len) %>%
+  sample_n(size = nrow(df_pos))
 
 # Set seed
 set.seed(1234567)
@@ -81,14 +97,6 @@ df_pos1 <- df_pos %>%
 
 # Preprocess
 df_neg1 <- df_neg %>%
-  # Select columns
-  select(id, selftext, title) %>%
-  # Remove reddit-specific nonsense
-  filter(!selftext %in% c("[deleted]", "[removed]")) %>%
-  # Unite the title and text columns
-  unite(text, c(title, selftext), sep = " ") %>%
-  # Remove missing
-  filter(!is.na(text)) %>%
   # Remove links / URLs
   mutate(text = str_remove_all(text, " ?(f|ht)tp(s?)://(.*)[.][a-z]+")) %>%
   # Remove markdown links
@@ -102,13 +110,6 @@ df_neg1 <- df_neg %>%
   mutate(text = recode(text, "&amp;" = "and", "Â´" = "'", "â€™" = "'")) %>%
   # Lowercase
   mutate(text = str_to_lower(text)) %>%
-  # Remove missing
-  mutate(
-    # Remove posts with no characters
-    str_len = str_length(text)
-  ) %>%
-  filter(str_len > 10) %>%
-  select(-str_len) %>%
   # Create label
   mutate(label = rep(0, nrow(.)))
 
@@ -117,11 +118,15 @@ df_neg1 <- df_neg %>%
 # Divide positive examples based on subreddits
 depression <- df_pos1 %>%
   filter(subreddit == "depression") %>%
-  select(-subreddit)
+  select(-subreddit) %>%
+  # Sample to preserve memory
+  slice_sample(n = 100000)
 
 anxiety <- df_pos1 %>%
   filter(subreddit == "anxiety") %>%
-  select(-subreddit)
+  select(-subreddit) %>%
+  # Sample to preserve memory
+  slice_sample(n = 100000)
 
 stress <- df_pos1 %>%
   filter(subreddit == "stress") %>%
@@ -129,7 +134,9 @@ stress <- df_pos1 %>%
 
 suicide <- df_pos1 %>%
   filter(subreddit == "suicide") %>%
-  select(-subreddit)
+  select(-subreddit) %>%
+  # Sample to preserve memory
+  slice_sample(n = 100000)
 
 # Combine positive and negative examples
 depression_df <- df_neg1 %>%
