@@ -1,7 +1,7 @@
 """
 SVM classifier for the DASS labels.
 
-Trains a depression classifier.
+Trains a stress classifier.
 """
 
 # region PREPARE WORKSPACE
@@ -25,7 +25,7 @@ my_path = os.getcwd()
 with open(my_path + '\doc\dass_output.txt', 'a') as f:
     print('\n', file=f)
     print('##############################################################', file=f)
-    print('DEPRESSION OUTPUT ############################################', file=f)
+    print('STRESS OUTPUT ############################################', file=f)
     print('\n', file=f)
 
 # endregion
@@ -33,7 +33,7 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 # region PREPARE DATA
 
 # Load the data
-raw_data = pd.read_csv(my_path + '\data\cleaned\dass\with_features\depression.csv')
+raw_data = pd.read_csv(my_path + '\data\cleaned\dass\with_features\stress.csv')
 
 # DELETE LATER =====================================================================
 raw_data = raw_data.sample(n=2000)
@@ -109,4 +109,4 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 # endregion
 
 # Save the SVM model to a file
-dump(svm, my_path + '\models\dass_depression.joblib')
+dump(svm, my_path + '\models\dass_stress.joblib')

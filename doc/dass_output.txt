@@ -2,38 +2,3 @@
 DEPRESSION, ANXIETY, STRESS, SUICIDE (DASS) CLASSIFIER OUTPUT
 ##############################################################
 
-
-
-
-##############################################################
-DEPRESSION OUTPUT ############################################
-
-
-Average runtime: 14.099
-Average accuracy: 0.853 (0.019)
-Average precision: 0.912 (0.025)
-Average recall: 0.782 (0.041)
-Average F1: 0.841 (0.022)
-
-
-TRAINING METRICS
-Average runtime: 14.099
-Average accuracy: 0.853 (0.019)
-Average precision: 0.912 (0.025)
-Average recall: 0.782 (0.041)
-Average F1: 0.841 (0.022)
-
-
-Runtime to fit SVM model: 0:00:02.427632
-
-
-Runtime to predict class labels: 0:00:00.408909
-
-
-TEST METRICS
-Accuracy: 0.860
-Precision: 0.939
-Recall: 0.770
-F1: 0.846
-
-

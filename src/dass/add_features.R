@@ -1,7 +1,7 @@
 # Dependencies
 library(tidyverse)
 
-# Import datasets
+# Import DASS datasets
 depression_df <- read_csv("data/cleaned/dass/depression_df.csv")
 anxiety_df <- read_csv("data/cleaned/dass/anxiety_df.csv")
 stress_df <- read_csv("data/cleaned/dass/stress_df.csv")
@@ -276,3 +276,381 @@ for (i in 1:length(trigram_suicide)) {
 
 # Save to file
 write_csv(suicide_df, "data/cleaned/dass/with_features/suicide.csv")
+
+# ADD FEATURES TO GROUND TRUTH AND PRIMARY --------------------------------
+
+#* DEPRESSION -------------------------------------------------------------
+
+# Import ground truth and primary datasets
+df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
+df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# GROUND TRUTH DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- unigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- bigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- trigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_truth, "data/cleaned/dass/truth/truth_depression.csv")
+
+# PRIMARY DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- unigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- bigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_depression)) {
+  
+  # Get the n-grams
+  ngram <- trigram_depression[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_primary, "data/cleaned/dass/primary/primary_depression.csv")
+
+#* ANXIETY ----------------------------------------------------------------
+
+# Import ground truth and primary datasets
+df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
+df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# GROUND TRUTH DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- unigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- bigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- trigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_truth, "data/cleaned/dass/truth/truth_anxiety.csv")
+
+# PRIMARY DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- unigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- bigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_anxiety)) {
+  
+  # Get the n-grams
+  ngram <- trigram_anxiety[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_primary, "data/cleaned/dass/primary/primary_depression.csv")
+
+#* STRESS -----------------------------------------------------------------
+
+# Import ground truth and primary datasets
+df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
+df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# GROUND TRUTH DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- unigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- bigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- trigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_truth, "data/cleaned/dass/truth/truth_stress.csv")
+
+# PRIMARY DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- unigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- bigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_stress)) {
+  
+  # Get the n-grams
+  ngram <- trigram_stress[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(truth_stress, "data/cleaned/dass/primary/primary_stress.csv")
+
+#* SUICIDE ----------------------------------------------------------------
+
+# Import ground truth and primary datasets
+df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
+df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# GROUND TRUTH DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- unigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- bigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- trigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(df_truth, "data/cleaned/dass/truth/truth_suicide.csv")
+
+# PRIMARY DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- unigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- bigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_suicide)) {
+  
+  # Get the n-grams
+  ngram <- trigram_suicide[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary[[ngram]] <- as.integer(x)  
+}
+
+# Save to file
+write_csv(truth_suicide, "data/cleaned/dass/primary/primary_suicide.csv")
