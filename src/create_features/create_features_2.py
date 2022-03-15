@@ -13,13 +13,22 @@ from joblib import load
 my_path = os.getcwd()
 
 # Load the ground truth datasets
-df_truth = pd.read_csv(my_path + '\data\cleaned\dass\\truth\\truth_depression.csv')
+truth_depression = pd.read_csv(my_path + '\data\cleaned\dass\\truth\\truth_depression.csv')
+truth_anxiety = pd.read_csv(my_path + '\data\cleaned\dass\\truth\\truth_anxiety.csv')
+truth_stress = pd.read_csv(my_path + '\data\cleaned\dass\\truth\\truth_stress.csv')
+truth_suicide = pd.read_csv(my_path + '\data\cleaned\dass\\truth\\truth_suicide.csv')
 
 # Load the primary datasets
-df_primary = pd.read_csv(my_path + '\data\cleaned\dass\primary\primary_depression.csv')
+primary_depression = pd.read_csv(my_path + '\data\cleaned\dass\primary\primary_depression.csv')
+primary_anxiety = pd.read_csv(my_path + '\data\cleaned\dass\primary\primary_anxiety.csv')
+primary_stress = pd.read_csv(my_path + '\data\cleaned\dass\primary\primary_stress.csv')
+primary_suicide = pd.read_csv(my_path + '\data\cleaned\dass\primary\primary_suicide.csv')
 
 # Load the SVM models
 svm_depression = load(my_path + '\models\dass_depression.joblib')
+svm_anxiety = load(my_path + '\models\dass_anxiety.joblib')
+svm_stress = load(my_path + '\models\dass_stress.joblib')
+svm_suicide = load(my_path + '\models\dass_suicide.joblib')
 
 # endregion
 
@@ -27,5 +36,10 @@ svm_depression = load(my_path + '\models\dass_depression.joblib')
 
 # Predict depression
 
+# Predict anxiety
+
+# Predict stress
+
+# Predict suicide
 
 # endregion

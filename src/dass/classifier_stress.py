@@ -35,10 +35,6 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 # Load the data
 raw_data = pd.read_csv(my_path + '\data\cleaned\dass\with_features\stress.csv')
 
-# DELETE LATER =====================================================================
-raw_data = raw_data.sample(n=2000)
-# ==================================================================================
-
 # Get features and label
 X = raw_data.drop(['id', 'text', 'label'], axis=1)
 Y = raw_data['label']
