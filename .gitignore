@@ -10,6 +10,7 @@ data/cleaned/liwc_results/**
 data/raw/dass/**
 data/cleaned/dass/**
 data/cleaned/df_primary_clean.csv
+models/**
 
 # -----------------------------------------------------
 # R files
