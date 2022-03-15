@@ -12,19 +12,7 @@ anxiety_df <- read_csv("data/cleaned/dass/anxiety_df.csv")
 # Load stop words
 data(stop_words)
 
-# Number of n-grams per DASS component = 1250
-# Number of trigrams = 416
-# Number of bigrams = 417
-# Number of unigrams = 417
-
 # GET FEATURES ------------------------------------------------------------
-
-# Log likelihood ratio test
-# http://uc-r.github.io/creating-text-features#likelihood
-# https://web.stanford.edu/~jurafsky/slp3/3.pdf
-# https://leimao.github.io/blog/Maximum-Likelihood-Estimation-Ngram/
-# https://www.youtube.com/watch?v=UyC0bBiZY-A
-# https://www.inf.ed.ac.uk/teaching/courses/fnlp/lectures/03_slides.pdf
 
 #* GET TRIGRAMS -----------------------------------------------------------
 
@@ -71,7 +59,7 @@ trigrams <- trigrams_tf_idf %>%
     remove = if_else(str_detect(trigram, regex("\\d|^amp|amp$| amp |tl dr|anxiety hey guys|anxiety irc channel|aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")), 1, 0)
   ) %>%
   filter(remove == 0) %>%
-  slice_head(n = 550) %>%
+  slice_head(n = 1666) %>%
   select(trigram)
 
 # Save to file
@@ -118,7 +106,7 @@ bigrams <- bigrams_tf_idf %>%
     remove = if_else(str_detect(bigram, regex("\\d|^amp|amp$|tl dr|throwaway account|dp dr|irc channel|irc$")), 1, 0)
   ) %>%
   filter(remove == 0) %>%
-  slice_head(n = 550) %>%
+  slice_head(n = 1667) %>%
   select(bigram)
 
 # Save to file
@@ -169,7 +157,7 @@ unigrams_neg <- unigrams_tf_idf %>%
 # Remove negative unigrams from positive unigrams
 unigrams <- anti_join(unigrams_pos, unigrams_neg) %>%
   # Select the unigrams
-  slice_head(n = 550) %>%
+  slice_head(n = 1667) %>%
   select(unigram = word) %>%
   #bind_rows(data.frame(unigram = c("anxiety", "anxious"))) %>%
   distinct(unigram)

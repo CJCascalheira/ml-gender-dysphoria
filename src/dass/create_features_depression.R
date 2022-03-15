@@ -12,11 +12,6 @@ depression_df <- read_csv("data/cleaned/dass/depression_df.csv")
 # Load stop words
 data(stop_words)
 
-# Number of n-grams per DASS component = 1250
-# Number of trigrams = 416
-# Number of bigrams = 417
-# Number of unigrams = 417
-
 # GET FEATURES ------------------------------------------------------------
 
 # Log likelihood ratio test
@@ -119,7 +114,7 @@ trigrams <- left_join(trigrams_ll, trigrams_tf_idf) %>%
     remove = if_else(str_detect(trigram, regex("\\d|^amp|amp$|tl dr")), 1, 0)
   ) %>%
   filter(remove == 0) %>%
-  slice_head(n = 550) %>%
+  slice_head(n = 1666) %>%
   select(trigram)
 
 # Save to file
@@ -166,7 +161,7 @@ bigrams <- bigrams_tf_idf %>%
     remove = if_else(str_detect(bigram, regex("\\d|^amp|amp$|tl dr|throwaway account")), 1, 0)
   ) %>%
   filter(remove == 0) %>%
-  slice_head(n = 550) %>%
+  slice_head(n = 1666) %>%
   select(bigram)
 
 # Save to file
@@ -217,7 +212,7 @@ unigrams_neg <- unigrams_tf_idf %>%
 # Remove negative unigrams from positive unigrams
 unigrams <- anti_join(unigrams_pos, unigrams_neg) %>%
   # Select the unigrams
-  slice_head(n = 550) %>%
+  slice_head(n = 1668) %>%
   select(unigram = word) %>%
   bind_rows(data.frame(unigram = c("depressed", "depressing"))) %>%
   distinct(unigram)
