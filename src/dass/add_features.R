@@ -465,7 +465,7 @@ for (i in 1:length(trigram_anxiety)) {
 }
 
 # Save to file
-write_csv(df_primary, "data/cleaned/dass/primary/primary_depression.csv")
+write_csv(df_primary, "data/cleaned/dass/primary/primary_anxiety.csv")
 
 #* STRESS -----------------------------------------------------------------
 
@@ -559,7 +559,7 @@ for (i in 1:length(trigram_stress)) {
 }
 
 # Save to file
-write_csv(truth_stress, "data/cleaned/dass/primary/primary_stress.csv")
+write_csv(df_primary, "data/cleaned/dass/primary/primary_stress.csv")
 
 #* SUICIDE ----------------------------------------------------------------
 
@@ -653,4 +653,4 @@ for (i in 1:length(trigram_suicide)) {
 }
 
 # Save to file
-write_csv(truth_suicide, "data/cleaned/dass/primary/primary_suicide.csv")
+write_csv(df_primary, "data/cleaned/dass/primary/primary_suicide.csv")
