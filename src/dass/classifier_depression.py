@@ -36,7 +36,7 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 raw_data = pd.read_csv(my_path + '\data\cleaned\dass\with_features\depression.csv')
 
 # Get features and label
-X = raw_data.drop(['id', 'text', 'label'], axis=1)
+X = raw_data.drop(['id', 'text', 'label', 'dysphoria'], axis=1)
 Y = raw_data['label']
 
 # No standardization needed because features are dichotomous
