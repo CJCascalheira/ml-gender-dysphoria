@@ -1,0 +1,37 @@
+======================================================
+FILES FOR EXTERNAL SERVER
+======================================================
+Files that need to be exported to Hamdi's server to execute the
+Python code.
+
+Log into the NMSU CS domain:
+https://intranet.cs.nmsu.edu/wp/intranet/how-to/remote-login/
+
+Transfer files via PuTTY from Windows 10 command line.
+pscp -P ## <program name> <username>@<CS domain>
+
+======================================================
+DASS FILES
+======================================================
+
+DATA FILES
+======================================================
+- data/cleaned/dass/**
+
+SOURCE FILES
+======================================================
+- src/dass/**
+- src/create_features/**
+
+DOCUMENT FILES
+======================================================
+- doc/dass_output.txt
+
+MODEL FILES
+======================================================
+- models/**
+
+ORDER OF FILE EXECUTION
+======================================================
+1. src/dass/classifier_**
+2. src/create_features/create_dass_**

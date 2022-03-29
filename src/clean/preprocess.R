@@ -32,38 +32,22 @@ df_ps_trans <- bind_rows(files_list, .id = "column_label") %>%
   select(-column_label)
 
 # Import gender dysphoria subreddit
-df_dysphoria <- read_csv("data/raw/reddit_dysphoria/reddit_dysphoria.csv")
+df_dysphoria <- read_csv("data/cleaned/dysphoria_reddit/df_truth_dysphoria_coded.csv")
 
 # Set seed
 set.seed(1234567)
 
 # COMBINE DATA: TRAINING DATA ---------------------------------------------
 
+# Clean up the dysphoria posts
+df_dysphoria1 <- df_dysphoria
+  # Remove who column
+  # Remove posts that did not make the cut (i.e., coded as 0)
+
 # Create the training set
-df_truth_dysphoria <- df_dysphoria %>%
-  # Select columns
-  select(text, title) %>%
-  # Remove reddit-specific nonsense
-  filter(!text %in% c("[deleted]", "[removed]")) %>%
-  # Unite the title and text columns
-  unite(text, c(title, text), sep = " ") %>%
-  # Remove missing
-  filter(!is.na(text)) %>%
-  # Add positive label for all posts in Gender Dysphoria subreddit
-  mutate(dysphoria = rep(1, nrow(.))) %>%
-  # Select the columns for merging
-  select(text, dysphoria) %>%
+df_truth_dysphoria <- df_dysphoria1 %>%
   # Combine with manually coded data
-  bind_rows(df_truth_raw[, c("text", "dysphoria")]) %>%
-  mutate(
-    # Remove unhelpful labels
-    remove = if_else(str_detect(text, regex("selling|research|need mods|looking for mods|discord server|pm.*discord",
-                                            ignore_case = TRUE)), 1, 0),
-    # Remove posts with fewer than 100 characters
-    str_len = str_length(text)
-  ) %>%
-  filter(remove == 0, str_len > 100) %>%
-  select(-remove, -str_len)
+  bind_rows(df_truth_raw[, c("text", "dysphoria")])
   
 # Count the number of positive examples
 n_pos <- df_truth_dysphoria %>%

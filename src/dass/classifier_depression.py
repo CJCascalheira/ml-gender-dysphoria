@@ -22,7 +22,7 @@ from joblib import dump
 my_path = os.getcwd()
 
 # Start file output
-with open(my_path + '\doc\dass_output.txt', 'a') as f:
+with open(my_path + '/doc/dass_output.txt', 'a') as f:
     print('\n', file=f)
     print('##############################################################', file=f)
     print('DEPRESSION OUTPUT ############################################', file=f)
@@ -33,7 +33,7 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 # region PREPARE DATA
 
 # Load the data
-raw_data = pd.read_csv(my_path + '\data\cleaned\dass\with_features\depression.csv')
+raw_data = pd.read_csv(my_path + '/data/cleaned/dass/with_features/depression.csv')
 
 # Get features and label
 X = raw_data.drop(['id', 'text', 'label', 'dysphoria'], axis=1)
@@ -62,7 +62,7 @@ scores = cross_validate(estimator=svm, X=x_train, y=y_train, scoring=my_metrics,
                         error_score='raise')
 
 # Print the average scores during training
-with open(my_path + '\doc\dass_output.txt', 'a') as f:
+with open(my_path + '/doc/dass_output.txt', 'a') as f:
     print('TRAINING METRICS', file=f)
     print('Average runtime: %.3f' % np.mean(scores['fit_time'] + scores['score_time']), file=f)
     print('Average accuracy: %.3f (%.3f)' % (np.mean(scores['test_accuracy']), np.std(scores['test_accuracy'])),
@@ -79,7 +79,7 @@ svm.fit(x_train, y_train)
 end_time = datetime.now()
 
 # Save results to file
-with open(my_path + '\doc\dass_output.txt', 'a') as f:
+with open(my_path + '/doc/dass_output.txt', 'a') as f:
     print('Runtime to fit SVM model: ' + str(end_time - start_time), file=f)
     print('\n', file=f)
 
@@ -89,12 +89,12 @@ y_pred = svm.predict(x_test)
 end_time = datetime.now()
 
 # Save results to file
-with open(my_path + '\doc\dass_output.txt', 'a') as f:
+with open(my_path + '/doc/dass_output.txt', 'a') as f:
     print('Runtime to predict class labels: ' + str(end_time - start_time), file=f)
     print('\n', file=f)
 
 # Print the metrics of the test results
-with open(my_path + '\doc\dass_output.txt', 'a') as f:
+with open(my_path + '/doc/dass_output.txt', 'a') as f:
     print('TEST METRICS', file=f)
     print('Accuracy: %.3f' % metrics.accuracy_score(y_true=y_test, y_pred=y_pred), file=f)
     print('Precision: %.3f' % metrics.precision_score(y_true=y_test, y_pred=y_pred), file=f)
@@ -105,4 +105,4 @@ with open(my_path + '\doc\dass_output.txt', 'a') as f:
 # endregion
 
 # Save the SVM model to a file
-dump(svm, my_path + '\models\dass_depression.joblib')
+dump(svm, my_path + '/models/dass_depression.joblib')
