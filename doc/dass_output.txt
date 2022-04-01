@@ -77,3 +77,27 @@ Precision: 0.980
 Recall: 0.894
 F1: 0.935
 
+
+##############################################################
+SUICIDE OUTPUT ############################################
+
+
+TRAINING METRICS
+Average runtime: 46528.100
+Average accuracy: 0.902 (0.002)
+Average precision: 0.956 (0.003)
+Average recall: 0.842 (0.006)
+Average F1: 0.896 (0.002)
+
+
+Runtime to fit SVM model: 1 day, 17:57:09.878939
+
+
+Runtime to predict class labels: 2:14:14.105985
+
+
+TEST METRICS
+Accuracy: 0.905
+Precision: 0.959
+Recall: 0.847
+F1: 0.899
