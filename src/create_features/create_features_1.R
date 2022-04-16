@@ -13,6 +13,8 @@ df_truth <- read_csv("data/cleaned/liwc_results/df_truth_liwc.csv") %>%
   mutate(temp_id = 1:nrow(.)) %>%
   select(temp_id, everything())
 
+df_truth <- df_truth[-1, ]
+
 df_primary <- read_csv("data/cleaned/liwc_results/df_primary_liwc.csv") %>%
   rename(text = A, dysphoria = B) %>%
   rename(function_liwc = `function`)

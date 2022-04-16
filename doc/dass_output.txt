@@ -101,3 +101,34 @@ Accuracy: 0.905
 Precision: 0.959
 Recall: 0.847
 F1: 0.899
+
+##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
+SVM classification of suicide: FINISHED!
+
+
+##############################################################
+SVM CLASSIFICATION OF DASS - PRIMARY #########################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
+SVM classification of suicide: FINISHED!

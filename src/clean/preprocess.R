@@ -13,15 +13,6 @@ files_list <- lapply(my_files1, read_csv)
 df_bq_trans <- bind_rows(files_list, .id = "column_label") %>%
   select(-column_label)
 
-# Import Big Query askscience files
-my_csvs <- list.files("data/raw/google_bigquery_science/")
-my_files1 <- paste0("data/raw/google_bigquery_science/", my_csvs)
-files_list <- lapply(my_files1, read_csv)
-
-# Combine data frames
-df_science <- bind_rows(files_list, .id = "column_label") %>%
-  select(-column_label)
-
 # Import Pushshift trans files
 my_csvs <- list.files("data/raw/pushshift/")
 my_files1 <- paste0("data/raw/pushshift/", my_csvs)
@@ -37,54 +28,29 @@ df_dysphoria <- read_csv("data/cleaned/dysphoria_reddit/df_truth_dysphoria_coded
 # Set seed
 set.seed(1234567)
 
-# COMBINE DATA: TRAINING DATA ---------------------------------------------
-
-# Clean up the dysphoria posts
-df_dysphoria1 <- df_dysphoria
-  # Remove who column
-  # Remove posts that did not make the cut (i.e., coded as 0)
+# BALANCE DATA: TRAINING DATA ---------------------------------------------
 
 # Create the training set
-df_truth_dysphoria <- df_dysphoria1 %>%
+df_truth_dysphoria <- df_dysphoria %>%
   # Combine with manually coded data
   bind_rows(df_truth_raw[, c("text", "dysphoria")])
   
+# Keep positive examples
+df_truth_dysphoria_pos <- df_truth_dysphoria %>%
+  filter(dysphoria == 1)
+
 # Count the number of positive examples
-n_pos <- df_truth_dysphoria %>%
-  filter(dysphoria == 1) %>%
+n_pos <- df_truth_dysphoria_pos %>%
   nrow()
 
-# Count the number of negative examples
-n_neg <- nrow(df_truth_dysphoria) - n_pos
-
-# Total needed to supplement dataframe
-n_sup <- n_pos - n_neg
-
-# Clean up the science data
-df_science1 <- df_science %>%
-  distinct(selftext, .keep_all = TRUE) %>%
-  # Select columns
-  select(selftext, title) %>%
-  # Remove reddit-specific nonsense
-  filter(!selftext %in% c("[deleted]", "[removed]")) %>%
-  # Unite the title and text columns
-  unite(text, c(title, selftext), sep = " ") %>%
-  # Remove missing
-  filter(!is.na(text))
-
-# Balance the dataset with science data
-df_truth_raw1 <- df_science1[1:n_sup, ] %>%
-  # Add negative labels to all science posts
-  mutate(dysphoria = rep(0, nrow(.))) %>%
-  # Combine with dysphoria dataframe
-  bind_rows(df_truth_dysphoria)
+# Balance the data
+df_truth_raw1 <- df_truth_dysphoria %>%
+  filter(dysphoria == 0) %>%
+  sample_n(n_pos) %>%
+  bind_rows(df_truth_dysphoria_pos)
 
 # Shuffle the data
 df_truth_raw2 <- df_truth_raw1[sample(1:nrow(df_truth_raw1)), ]
-
-# Is the dataset balanced?
-df_truth_raw2 %>%
-  count(dysphoria)
 
 # Get example of each class
 df_truth_raw2 %>%

@@ -283,7 +283,11 @@ write_csv(suicide_df, "data/cleaned/dass/with_features/suicide.csv")
 
 # Import ground truth and primary datasets
 df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
-df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+# df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# NOTE: Comment out the df_primary because the set.seed may not have worked in 
+# the preprocess.R file. We already assigned DASS features to the df_primary 
+# dataset; just re-assigning to df_truth because we updated the dataset.
 
 # GROUND TRUTH DATASET
 
@@ -377,7 +381,11 @@ write_csv(df_primary, "data/cleaned/dass/primary/primary_depression.csv")
 
 # Import ground truth and primary datasets
 df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
-df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+# df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# NOTE: Comment out the df_primary because the set.seed may not have worked in 
+# the preprocess.R file. We already assigned DASS features to the df_primary 
+# dataset; just re-assigning to df_truth because we updated the dataset.
 
 # GROUND TRUTH DATASET
 
@@ -471,7 +479,11 @@ write_csv(df_primary, "data/cleaned/dass/primary/primary_anxiety.csv")
 
 # Import ground truth and primary datasets
 df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
-df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+# df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# NOTE: Comment out the df_primary because the set.seed may not have worked in 
+# the preprocess.R file. We already assigned DASS features to the df_primary 
+# dataset; just re-assigning to df_truth because we updated the dataset.
 
 # GROUND TRUTH DATASET
 
@@ -565,7 +577,11 @@ write_csv(df_primary, "data/cleaned/dass/primary/primary_stress.csv")
 
 # Import ground truth and primary datasets
 df_truth <- read_csv("data/cleaned/df_truth_clean.csv")
-df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+# df_primary <- read_csv("data/cleaned/df_primary_clean.csv")
+
+# NOTE: Comment out the df_primary because the set.seed may not have worked in 
+# the preprocess.R file. We already assigned DASS features to the df_primary 
+# dataset; just re-assigning to df_truth because we updated the dataset.
 
 # GROUND TRUTH DATASET
 
