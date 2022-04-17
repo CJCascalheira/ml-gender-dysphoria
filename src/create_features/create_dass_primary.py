@@ -1,5 +1,5 @@
 """
-Create word embedding and DASS features for both the ground truth and primary datasets.
+Create DASS features for both the primary dataset.
 """
 
 # region PREPARE WORKSPACE

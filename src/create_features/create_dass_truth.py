@@ -1,5 +1,6 @@
+
 """
-Create word embedding and DASS features for both the ground truth and primary datasets.
+Create DASS features for both the ground truth dataset.
 """
 
 # region PREPARE WORKSPACE
@@ -8,6 +9,7 @@ Create word embedding and DASS features for both the ground truth and primary da
 import os
 import pandas as pd
 from joblib import load
+import sklearn
 
 # Get current working directory
 my_path = os.getcwd()

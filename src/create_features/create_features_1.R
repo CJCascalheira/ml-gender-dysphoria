@@ -1,8 +1,8 @@
 # Dependencies
 library(tidyverse)
 library(tidytext)
+library(textdata)
 library(widyr)
-#library(topicmodels)
 
 # Import data
 df_truth <- read_csv("data/cleaned/liwc_results/df_truth_liwc.csv") %>%
@@ -149,7 +149,7 @@ unigram_df1 <- unigram_df %>%
   filter(dysphoria == 1) %>%
   # Remove words based on closed inspection of unigrams
   mutate(remove = if_else(str_detect(word, regex("’s|’d|'s|	
-’ve|\\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lockdown|covid")), 1, 0)) %>%
+’ve|\\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lockdown|covid|grammatical|film|eh|could’ve|december|vehicle|paint|ness|bout|brown|animals|âˆ|weather|bike|maria|albeit|amd|matt|minecraft")), 1, 0)) %>%
   filter(remove == 0)
 
 # Select top 250 unigrams
@@ -222,7 +222,7 @@ trigram_df <- df_truth2 %>%
 # View trigrams to clean for internet nonsense
 trigram_df1 <- trigram_df %>%
   # Manual remove of nonsense
-  mutate(remove = if_else(str_detect(trigram, "\\d|ðÿ|^amp |amp | amp$|NA NA NA|poll$|jfe|_link|link_|playlist 3948ybuzmcysemitjmy9jg si|complete 3 surveys|gmail.com mailto:hellogoodbis42069 gmail.com|hellogoodbis42069 gmail.com mailto:hellogoodbis42069|comments 7n2i gay_marriage_debunked_in_2_minutes_obama_vs_alan|debatealtright comments 7n2i|gift card|amazon|action hirewheller csr|energy 106 fm|form sv_a3fnpplm8nszxfb width"), 1, 0)) %>%
+  mutate(remove = if_else(str_detect(trigram, "\\d|ðÿ|^amp |amp | amp$|NA NA NA|poll$|jfe|_link|link_|playlist 3948ybuzmcysemitjmy9jg si|complete 3 surveys|gmail.com mailto:hellogoodbis42069 gmail.com|hellogoodbis42069 gmail.com mailto:hellogoodbis42069|comments 7n2i gay_marriage_debunked_in_2_minutes_obama_vs_alan|debatealtright comments 7n2i|gift card|amazon|action hirewheller csr|energy 106 fm|form sv_a3fnpplm8nszxfb width|â íœê í|âˆ âˆ âˆ"), 1, 0)) %>%
   filter(remove == 0) %>%
   # Calculate tf-idf
   bind_tf_idf(trigram, dysphoria, n) %>%
@@ -230,71 +230,92 @@ trigram_df1 <- trigram_df %>%
   arrange(desc(tf_idf)) %>%
   filter(dysphoria == 1)
 
-# Select top 100 trigrams
-trigram_vector <- trigram_df1[1:100, ]$trigram
+# Select top 50 trigrams
+trigram_vector <- trigram_df1[1:50, ]$trigram
 
-# Combine all n-gram vectors
-ngram_vector <- c(unigram_vector, bigram_vector, trigram_vector)
+# GROUND TRUTH DATASET
 
-# Create features - training set
-df_truth3 <- df_truth2 %>%
-  mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
-
-# Create features - testing set
-df_primary3 <- df_primary2 %>%
-  mutate(ngrams = if_else(str_detect(text, regex(paste(ngram_vector, collapse = "|"))), 1, 0))
-
-# TOPIC MODELING WITH LDA -------------------------------------------------
-
-# For help, see https://www.tidytextmining.com/topicmodeling.html
-
-# Ran this code, but the topics were not helpful---too similar
-
-# Select only positive examples of gender dysphoria
-#df_truth3_pos <- df_truth3 %>%
-#  filter(dysphoria == 1) %>%
-#  select(temp_id, text)
-
-# Create a document term matrix
-#word_counts <- df_truth3_pos %>%
-  # Create tokens for each Reddit post
-#  unnest_tokens(word, text) %>%
-  # Remove common stop words
-#  anti_join(stop_words) %>%
-  # Clean up based on remaining stop words
-#  mutate(
-#    stop_word = if_else(str_detect(word, regex("^im$|that's|i’m|it’s|you’re|don’t|dont|It|can’t|lt|he’s|she’s|i’ve|doesn’t|didn’t|isn’t|there’s|that'll|how’s|they’ll|it’ll|would've|we’ll|they’ve|shouldn’t|that’s|i’ll|they’re|aren’t|i’d|won’t|what’s|you’ve|we’re|wouldn’t|haven’t|wasn’t|y'all|let’s|here’s|who’s|you’ll|couldn’t|weren’t|hasn’t|we’ve|ain’t|you’d|y’all")), 1, 0)
-#  ) %>%
-  # Remove contraction keywords
-#  filter(stop_word == 0) %>%
-#  select(-stop_word) %>%
-#  count(temp_id, word, sort = TRUE) 
-#word_counts
-
-# Transform into a DTM
-#df_truth_dtm <- word_counts %>%
-#  cast_dtm(temp_id, word, n)
-#df_truth_dtm
-
-# Execute Latent Dirichlet Allocation (LDA) with k = 4
-#df_truth_lda4 <- LDA(df_truth_dtm, k = 2, control = list(seed = 1234567))
-
-# Get the topics
-#lda4_topics <- tidy(df_truth_lda4, matrix = "beta")
-
-# Visualize topics
-#lda4_topics %>%
-#  group_by(topic) %>%
-#  slice_max(beta, n = 5) %>% 
-#  ungroup() %>%
-#  arrange(topic, -beta) %>%
-#  mutate(term = reorder_within(term, beta, topic)) %>%
-#  ggplot(aes(beta, term, fill = factor(topic))) +
-#  geom_col(show.legend = FALSE) +
-#  facet_wrap(~ topic, scales = "free") +
-#  scale_y_reordered()
+# Assign the unigrams as features
+for (i in 1:length(unigram_vector)) {
   
+  # Get the n-grams
+  ngram <- unigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth2[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_vector)) {
+  
+  # Get the n-grams
+  ngram <- bigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth2[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_vector)) {
+  
+  # Get the n-grams
+  ngram <- trigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_truth2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_truth2[[ngram]] <- as.integer(x)  
+}
+
+# PRIMARY DATASET
+
+# Assign the unigrams as features
+for (i in 1:length(unigram_vector)) {
+  
+  # Get the n-grams
+  ngram <- unigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary2[[ngram]] <- as.integer(x)  
+}
+
+# Assign the bigrams as features
+for (i in 1:length(bigram_vector)) {
+  
+  # Get the n-grams
+  ngram <- bigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary2[[ngram]] <- as.integer(x)  
+}
+
+# Assign the trigrams as features
+for (i in 1:length(trigram_vector)) {
+  
+  # Get the n-grams
+  ngram <- trigram_vector[i]
+  
+  # Detect the n-gram with regular expressions
+  x <- str_detect(df_primary2$text, regex(ngram))
+  
+  # Add the n-gram to the dataframe
+  df_primary2[[ngram]] <- as.integer(x)  
+}
+
 # SAVE DATAFRAMES WITH FEATURES -------------------------------------------
 
-write_csv(df_truth3, "data/cleaned/with_features/df_truth.csv")
-write_csv(df_primary3, "data/cleaned/with_features/df_primary.csv")
+write_csv(df_truth2, "data/cleaned/features_temp/df_truth.csv")
+write_csv(df_primary2, "data/cleaned/features_temp/df_primary.csv")

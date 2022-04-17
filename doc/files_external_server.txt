@@ -35,3 +35,19 @@ ORDER OF FILE EXECUTION
 ======================================================
 1. src/dass/classifier_**
 2. src/create_features/create_dass_**
+
+======================================================
+USING LINUX SCREEN
+======================================================
+
+https://linuxize.com/post/how-to-use-linux-screen/ 
+
+https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/
+
+Six steps
+1. screen -S cory (suppose cory is the screen id)
+2. run command: Python ... 
+3. hit ctrl-A+D (screen detach)
+4. logout from ssh
+5. again login in ssh
+6. screen -r cory (retrieve the session)

@@ -131,4 +131,23 @@ SVM classification of anxiety: FINISHED!
 SVM classification of stress: FINISHED!
 
 
+SVM classification of suicide: FINISHED!##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
 SVM classification of suicide: FINISHED!
+
+
