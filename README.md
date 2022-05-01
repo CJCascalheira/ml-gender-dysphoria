@@ -14,7 +14,7 @@ Classifying gender dysphoria disclosures on Reddit using machine learning (ML) t
   * *n_features* += 4.
   * *Types of features*. Depression, anxiety, stress, suicide.
 
-* **Word Embeddings**.
+* **Word Embeddings**. Used Word2Vec and the Gensim library.
 
 * **Psycholinguistic Attributes**. Taken from the Linguistic Inquiry and Word Count (LIWC) lexicon.
   * *n_features* += 93.
