@@ -95,9 +95,9 @@ df_truth2 <- df_truth1 %>%
   # Calculate total sentiment of post
   summarize(sentiment_valence = sum(value)) %>%
   # Join to main dataframe
-  left_join(df_truth) %>%
+  left_join(df_truth1) %>%
   # Rearrange the variables
-  select(temp_id, text, dysphoria, everything())
+  select(temp_id, text, dysphoria, clinical_keywords, everything())
 df_truth2
 
 # Add features - test
@@ -115,9 +115,9 @@ df_primary2 <- df_primary1 %>%
   # Calculate total sentiment of post
   summarize(sentiment_valence = sum(value)) %>%
   # Join to main dataframe
-  left_join(df_primary) %>%
+  left_join(df_primary1) %>%
   # Rearrange the variables
-  select(temp_id, text, dysphoria, everything())
+  select(temp_id, text, dysphoria, clinical_keywords, everything())
 df_primary2
 
 # TOP N-GRAMS -------------------------------------------------------------
