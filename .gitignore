@@ -13,6 +13,7 @@ data/cleaned/features_temp/**
 data/cleaned/df_primary_clean.csv
 models/**
 data/cleaned/dysphoria_reddit/**
+data/results/confusion_matrix_data/**
 
 # -----------------------------------------------------
 # R files
