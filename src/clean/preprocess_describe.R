@@ -1,5 +1,6 @@
 # Dependencies
 library(tidyverse)
+library(lubridate)
 
 # Import
 df_truth_raw <- read_csv("data/raw/df_truth_raw.csv")
@@ -52,18 +53,14 @@ df_truth_raw1 <- df_truth_dysphoria %>%
 # Shuffle the data
 df_truth_raw2 <- df_truth_raw1[sample(1:nrow(df_truth_raw1)), ]
 
-# Get example of each class
-df_truth_raw2 %>%
-  group_by(dysphoria) %>%
-  sample_n(size = 2) %>%
-  write_csv("data/results/ground_truth_examples.csv")
-
 # COMBINE DATA: TESTING DATA ----------------------------------------------
 
 # Clean the data from Big Query 
 df_bq_trans1 <- df_bq_trans %>%
+  # Create datetime
+  mutate(post_time = as_datetime(created_utc)) %>%
   # Select columns
-  select(id, selftext, title) %>%
+  select(id, selftext, title, post_time) %>%
   # Remove reddit-specific nonsense
   filter(!selftext %in% c("[deleted]", "[removed]")) %>%
   # Unite the title and text columns
@@ -73,10 +70,12 @@ df_bq_trans1 <- df_bq_trans %>%
   # Add no label
   mutate(dysphoria = rep(NA_character_, nrow(.))) %>%
   # Select the columns for merging
-  select(text, dysphoria) 
+  select(text, post_time, dysphoria) 
 
 # Clean data from Pushshift and combine with data from Big Query
-df_primary_raw <- df_ps_trans[, "text"] %>%
+df_primary_raw <- df_ps_trans %>%
+  # Select columns
+  select(text, post_time) %>%
   # Remove reddit-specific nonsense
   filter(!text %in% c("[deleted]", "[removed]")) %>%
   # Remove missing
@@ -122,6 +121,12 @@ df_truth
 df_truth %>%
   mutate(str_len = str_length(text)) %>%
   arrange(str_len)
+
+# Get example of each class
+df_truth %>%
+  group_by(dysphoria) %>%
+  sample_n(size = 2) %>%
+  write_csv("data/results/ground_truth_examples.csv")
 
 # CLEAN TESTING DATA ------------------------------------------------------
 
@@ -170,7 +175,45 @@ df_primary_2 <- df_primary_1 %>%
   filter(str_len > 2) %>%
   select(-str_len) 
 
+# DESCRIBE DATASETS -------------------------------------------------------
+
+# Since did not track participants, estimate with ratio
+unique_participants <- distinct(df_bq_trans, author) %>% nrow()
+total_participants <- nrow(df_bq_trans)
+participant_ratio <- unique_participants / total_participants
+
+# Ground truth - estimate number of participants
+n_participant_truth <- nrow(df_truth_dysphoria) * participant_ratio
+
+# Primary data - estimate number of participants
+n_participant_primary <- (nrow(df_bq_trans) + nrow(df_ps_trans)) * participant_ratio
+
+# Total estimate participants
+n_participant_truth + n_participant_primary
+
+# Total number of raw posts downloaded
+nrow(df_truth_dysphoria) + nrow(df_bq_trans) + nrow(df_ps_trans)
+
+# Count total posts after all cleaning
+total_primary <- read_csv("data/cleaned/with_features/df_primary.csv")
+total_truth <- read_csv("data/cleaned/with_features/df_truth.csv")
+nrow(total_primary) + nrow(total_truth)
+
+# Get times of primary data set 
+df_primary_2 %>%
+  # Filter the text in the final data set
+  filter(text %in% total_primary$text) %>%
+  # convert to hear
+  mutate(year = year(post_time)) %>%
+  # Count the number of posts per years
+  count(year)
+
 # WRITE TO FILE -----------------------------------------------------------
 
+# Ground truth data set
 write_csv(df_truth, "data/cleaned/df_truth_clean.csv")
-write_csv(df_primary_2, "data/cleaned/df_primary_clean.csv")
+
+# primary data set
+df_primary_2 %>%
+  select(text, dysphoria) %>% 
+  write_csv("data/cleaned/df_primary_clean.csv")
