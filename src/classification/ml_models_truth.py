@@ -12,6 +12,7 @@ RESOURCES
 
 # Load dependencies
 import os
+import random
 import pandas as pd
 import numpy as np
 from pprint import pprint
@@ -33,23 +34,46 @@ from scipy.stats import truncnorm, randint, uniform
 # Set working directory
 my_path = os.getcwd()
 
+# Set the seed
+random.seed(10)
+
 #region PREPARE DATA AND METRICS
 
 # Import the data
 df_truth = pd.read_csv(my_path + '/data/cleaned/with_features/df_truth.csv')
 
-# Get the features as matrix and the labels as vector
-truth_x = df_truth.drop(['Unnamed: 0', 'temp_id', 'text', 'dysphoria'], axis=1).values
-truth_y = df_truth['dysphoria'].values
+# Get the features and the labels
+truth_x = df_truth.drop(['Unnamed: 0', 'temp_id', 'text', 'dysphoria'], axis=1)
+truth_y = df_truth['dysphoria']
+
+# Split the data into training and test sets
+truth_x_train, truth_x_test, truth_y_train, truth_y_test = train_test_split(truth_x, truth_y, test_size=0.20, stratify=truth_y)
+
+# Save for splits for error analysis
+truth_x_train.reset_index(inplace=True)
+truth_x_train.to_csv(my_path + '/data/results/confusion_matrix_data/truth_x_train.csv')
+
+pd.DataFrame(truth_y_train).reset_index(inplace=True)
+truth_y_train.to_csv(my_path + '/data/results/confusion_matrix_data/truth_y_train.csv')
+
+truth_x_test.reset_index(inplace=True)
+truth_x_test.to_csv(my_path + '/data/results/confusion_matrix_data/truth_x_test.csv')
+
+pd.DataFrame(truth_y_test).reset_index(inplace=True)
+truth_y_test.to_csv(my_path + '/data/results/confusion_matrix_data/truth_y_test.csv')
+
+# Transform to matrices
+truth_x_train = truth_x_train.values
+truth_x_test = truth_x_test.values
+truth_y_train = truth_y_train.values
+truth_y_test = truth_y_test.values
 
 # Instantiate the standard scaler
 sc = StandardScaler()
 
 # Standardize the feature matrix
-truth_x_std = sc.fit_transform(truth_x)
-
-# Split the data into training and test sets
-truth_x_train, truth_x_test, truth_y_train, truth_y_test = train_test_split(truth_x_std, truth_y, test_size=0.20, stratify=truth_y)
+truth_x_train = sc.fit_transform(truth_x_train)
+truth_x_test = sc.transform((truth_x_test))
 
 # Initialize k-fold cross-validation
 kfold = KFold(n_splits=10, random_state=1, shuffle=True)
@@ -234,10 +258,15 @@ with open(my_path + '/doc/random_search_output.txt', 'a') as f:
     print('\n', file=f)
 
 # Save all data for confusion matrix
-predictions_df = pd.DataFrame(data=zip(truth_y_train, y_pred_train, truth_y_test, y_pred_test),
-             columns=['truth_y_train', 'y_pred_train', 'truth_y_test', 'y_pred_test'])
+predictions_df_train = pd.DataFrame(data=zip(truth_y_train, y_pred_train),
+             columns=['truth_y_train', 'y_pred_train'])
 
-predictions_df.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_rf.csv')
+predictions_df_train.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_rf_train.csv')
+
+predictions_df_test = pd.DataFrame(data=zip(truth_y_test, y_pred_test),
+             columns=['truth_y_test', 'y_pred_test'])
+
+predictions_df_test.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_rf_test.csv')
 
 # Save the model to a file
 dump(model_rf, my_path + '/models/model_rf.joblib')
@@ -308,10 +337,15 @@ with open(my_path + '/doc/random_search_output.txt', 'a') as f:
     print('\n', file=f)
 
 # Save all data for confusion matrix
-predictions_df = pd.DataFrame(data=zip(truth_y_train, y_pred_train, truth_y_test, y_pred_test),
-                              columns=['truth_y_train', 'y_pred_train', 'truth_y_test', 'y_pred_test'])
+predictions_df_train = pd.DataFrame(data=zip(truth_y_train, y_pred_train),
+             columns=['truth_y_train', 'y_pred_train'])
 
-predictions_df.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_xgb.csv')
+predictions_df_train.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_xgb_train.csv')
+
+predictions_df_test = pd.DataFrame(data=zip(truth_y_test, y_pred_test),
+             columns=['truth_y_test', 'y_pred_test'])
+
+predictions_df_test.to_csv(my_path + '/data/results/confusion_matrix_data/predictions_xgb_test.csv')
 
 # Save the model to a file
 dump(model_xgb, my_path + '/models/model_xgb.joblib')

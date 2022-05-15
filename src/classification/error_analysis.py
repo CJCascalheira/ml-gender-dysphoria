@@ -12,7 +12,7 @@ RESOURCES:
 # Import dependencies
 import os
 import pandas as pd
-from sklearn.metrics import confusion_matrix
+import numpy as np
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import matplotlib
@@ -29,7 +29,15 @@ predictions_xgb = pd.read_csv(my_path + '/data/results/confusion_matrix_data/pre
 #region CONFUSION MATRIX
 
 # Calculate confusion matrix of test set
-confusion_matrix(y_true=predictions_xgb['truth_y_test'], y_pred=predictions_xgb['y_pred_test'])
+predictions_test = predictions_xgb[['truth_y_test', 'y_pred_test']]
+
+# Add false positive column
+predictions_test['false_pos'] = np.where((predictions_test.loc[:, 'truth_y_test'] == 1) &
+                                         (predictions_test.loc[:, 'y_pred_test'] == 0), 1, 0)
+
+# Add false negative column
+predictions_test['false_pos'] = np.where((predictions_test.loc[:, 'truth_y_test'] == 0) &
+                                         (predictions_test.loc[:, 'y_pred_test'] == 1), 1, 0)
 
 # Visualize the confusion matrix of test set
 ConfusionMatrixDisplay.from_predictions(y_true=predictions_xgb['truth_y_test'], y_pred=predictions_xgb['y_pred_test'])
