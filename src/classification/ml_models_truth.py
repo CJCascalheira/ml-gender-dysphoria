@@ -183,7 +183,7 @@ print('Average ROC AUC: %.3f (%.3f)' % (np.mean(scores_naive_bayes['test_roc_auc
 # Specify hyperparameters of the XGBoost
 xgb = XGBClassifier(booster='gbtree', use_label_encoder=False, eval_metric='logloss', eta=0.1, max_depth=10)
 
-# Fit the random forest with k-fold cross-validation
+# Fit the XGBoost classifier with k-fold cross-validation
 scores_xgb = cross_validate(estimator=xgb, X=truth_x_train, y=truth_y_train,
                scoring=my_metrics, cv=kfold, n_jobs=-1, error_score='raise')
 
