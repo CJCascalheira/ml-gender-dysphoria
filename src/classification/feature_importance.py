@@ -157,6 +157,9 @@ feature_names_df = (
     .sort_values(by='info_gained', ascending=False)
 )
 
+# Top ten features
+print(feature_names_df.iloc[0:10, :])
+
 #endregion
 
 #region SUMMARIZE FEATURE IMPORTANCE
