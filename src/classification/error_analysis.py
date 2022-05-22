@@ -6,7 +6,6 @@ RESOURCES:
 - https://github.com/dataiku-research/mealy
 - https://dataiku-research.github.io/mealy/reference.html
 - https://stackoverflow.com/questions/3899980/how-to-change-the-font-size-on-a-matplotlib-plot
--
 """
 
 # Import dependencies
@@ -15,10 +14,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
+import random
 from sklearn.metrics import ConfusionMatrixDisplay
 from xgboost import XGBClassifier
 from pprint import pprint
-import mealy
+from sklearn.preprocessing import StandardScaler
 from mealy.error_analyzer import ErrorAnalyzer
 from mealy.error_visualizer import ErrorVisualizer
 
@@ -27,6 +27,11 @@ my_path = os.getcwd()
 
 # Set the backend for matplotlib
 matplotlib.use('Qt5Agg')
+
+# Set the seed
+default_seed = 10
+np.random.seed(default_seed)
+random.seed(default_seed)
 
 # Import predictions and true labels
 predictions_xgb_test = pd.read_csv(my_path + '/data/results/confusion_matrix_data/predictions_xgb_test.csv')
@@ -70,18 +75,25 @@ ConfusionMatrixDisplay.from_predictions(y_true=predictions_xgb_train['truth_y_tr
 
 #region MEALY ANALYSIS
 
-# Prepare standardized data for error tree model
+# Prepare data for error tree model
 truth_x_train1 = truth_x_train.drop(['Unnamed: 0', 'index'], axis=1)
 truth_x_test1 = truth_x_test.drop(['Unnamed: 0', 'index'], axis=1)
 
 # Get the feature names
 feature_names = truth_x_train1.columns
 
-# Transform standardized data into matrices and vectors
+# Transform data into matrices and vectors
 truth_x_train1 = truth_x_train1.values
 truth_x_test1 = truth_x_test1.values
 truth_y_train1 = truth_y_train[1].values
 truth_y_test1 = truth_y_test[1].values
+
+# Instantiate the standard scaler
+sc = StandardScaler()
+
+# Standardize the feature matrix
+truth_x_train1 = sc.fit_transform(truth_x_train1)
+truth_x_test1 = sc.transform((truth_x_test1))
 
 # Trouble loading XGBoost model with joblib, so retrain with best hyperparameters
 xgb = XGBClassifier(booster='gbtree', use_label_encoder=False, eval_metric='logloss', eta=0.17413992398042408,
@@ -103,8 +115,10 @@ pprint(error_analyzer.get_error_leaf_summary(leaf_selector=None, add_path_to_lea
 # Instantiate the error visualizer
 error_visualizer = ErrorVisualizer(error_analyzer)
 
-# Visualize the error
+# Set the leaf id to correspond to the lead node with the most error
 leaf_id = error_analyzer._get_ranked_leaf_ids()[0]
+
+# Visualize the error
 error_visualizer.plot_feature_distributions_on_leaves(leaf_selector=leaf_id, top_k_features=10)
 
 #endregion
