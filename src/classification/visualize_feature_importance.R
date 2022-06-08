@@ -1,6 +1,9 @@
 # Load dependencies
 library(tidyverse)
 
+# Import ground truth
+df_truth <- read_csv("data/cleaned/with_features/df_truth.csv")
+
 # Import data and arrange
 feat_selected <- read_csv("data/results/feature_selection/number_features_selected.csv") %>%
   arrange(desc(percent_used)) %>%
@@ -8,6 +11,19 @@ feat_selected <- read_csv("data/results/feature_selection/number_features_select
 
 feat_importance <- read_csv("data/results/feature_selection/avg_feature_importance.csv") %>%
   arrange(desc(info_gained))
+
+# EXAMPLES FOR DL PAPER ---------------------------------------------------
+
+# Get the examples
+truth_examples <- df_truth %>%
+  group_by(dysphoria) %>%
+  select(temp_id, text) %>%
+  sample_n(size = 2)
+
+# Save examples
+write_csv(truth_examples, "data/results/ground_truth_examples_2.csv")
+
+# FEATURE IMPORTANCE ------------------------------------------------------
 
 # Visualize the number of features selected
 feat_selected_plot <- feat_selected %>%

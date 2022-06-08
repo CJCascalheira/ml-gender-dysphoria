@@ -49,6 +49,10 @@ truth_y = df_truth['dysphoria']
 # Split the data into training and test sets
 truth_x_train, truth_x_test, truth_y_train, truth_y_test = train_test_split(truth_x, truth_y, test_size=0.20, stratify=truth_y)
 
+# Number of examples in each set
+print(truth_x_train.shape)
+print(truth_x_test.shape)
+
 # Save for splits for error analysis
 truth_x_train.reset_index(inplace=True)
 truth_x_train.to_csv(my_path + '/data/results/confusion_matrix_data/truth_x_train.csv')
@@ -86,7 +90,7 @@ my_metrics = {'accuracy', 'precision', 'recall', 'f1', 'roc_auc'}
 #region LOGISTIC REGRESSION
 
 # Specify the hyperparameters of the logistic regression
-log_reg = LogisticRegression(penalty='none', C=1.0, max_iter=100)
+log_reg = LogisticRegression(penalty='l2', C=1.0, max_iter=100)
 
 # Fit the logistic regression with k-fold cross-validation
 scores_log_reg = cross_validate(estimator=log_reg, X=truth_x_train, y=truth_y_train,
