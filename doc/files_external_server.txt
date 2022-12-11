@@ -1,0 +1,96 @@
+======================================================
+FILES FOR EXTERNAL SERVER
+======================================================
+Files that need to be exported to Hamdi's server to execute the
+Python code.
+
+Log into the NMSU CS domain:
+https://intranet.cs.nmsu.edu/wp/intranet/how-to/remote-login/
+
+Transfer files via PuTTY from Windows 10 command line.
+======================================================
+Transfer from Windows to Linux:
+pscp -P ## <program name> <username>@<CS domain>:<file name>
+
+Transfer from Linux to Windows
+psftp <username>@<CS domain>
+get <program name>
+
+##################################################################
+
+======================================================
+DASS FILES
+======================================================
+
+DATA FILES
+======================================================
+- data/cleaned/dass/**
+
+SOURCE FILES
+======================================================
+- src/dass/**
+- src/create_features/**
+
+DOCUMENT FILES
+======================================================
+- doc/dass_output.txt
+
+MODEL FILES
+======================================================
+- models/**
+
+ORDER OF FILE EXECUTION
+======================================================
+1. src/dass/classifier_**
+2. src/create_features/create_dass_**
+
+##################################################################
+
+======================================================
+RANDOM SEARCH FILES
+======================================================
+
+DATA FILES
+======================================================
+- data/cleaned/with_features/**
+- data/cleaned/results/**
+
+SOURCE FILES
+======================================================
+- src/classification/**
+
+DOCUMENT FILES
+======================================================
+- doc/random_search_output.txt
+
+MODEL FILES
+======================================================
+- models/**
+
+ORDER OF FILE EXECUTION
+======================================================
+1. src/classification/ml_models_truth.py
+
+##################################################################
+
+======================================================
+USING LINUX SCREEN
+======================================================
+
+https://linuxize.com/post/how-to-use-linux-screen/ 
+
+https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/
+
+Six steps
+1. screen -S cory (suppose cory is the screen id; only use to create)
+2. run command: Python ... 
+3. hit ctrl-A+D (screen detach)
+4. logout from ssh
+5. again login in ssh
+6. screen -r cory (retrieve the session)
+
+======================================================
+INSTALLING PYTHON PACKAGE ON LINUX
+======================================================
+
+python3 -m pip install xgboost

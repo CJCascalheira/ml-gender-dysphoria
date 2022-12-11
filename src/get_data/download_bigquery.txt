@@ -1,0 +1,33 @@
+# Format for downloading from Google Big Query
+SELECT id,author,created_utc,selftext,title,score
+FROM `fh-bigquery.reddit_posts.2019*`
+WHERE subreddit = 'askscience'
+
+# Download using the fh-bigquery/reddit_posts datasets
+
+# For gender dysphoria project, download for years 2016, 2017, 2018, 2019 from
+# r/askscience
+# r/ftm
+# r/MtF
+# r/NonBinary
+# r/trans
+
+# For DASS classifier, download for years 2016, 2017, 2018, 2019 from
+# DASS CONDITIONS
+# r/depression
+# r/Anxiety
+# r/SuicideWatch
+# r/Stress
+
+# CONTROL CONDITIONS
+# r/movies
+# r/aww
+
+# For DASS classifier control conditions, downloaded for 2018 / 2019 from
+# r/funny
+# r/AskReddit
+# r/gaming
+# r/Music
+# r/worldnews
+# r/todayilearned
+# r/news

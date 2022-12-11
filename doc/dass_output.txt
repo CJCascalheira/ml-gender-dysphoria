@@ -1,0 +1,154 @@
+##############################################################
+DEPRESSION, ANXIETY, STRESS, SUICIDE (DASS) CLASSIFIER OUTPUT
+##############################################################
+
+
+##############################################################
+STRESS OUTPUT ############################################
+
+
+TRAINING METRICS
+Average runtime: 1.656
+Average accuracy: 0.931 (0.017)
+Average precision: 0.996 (0.004)
+Average recall: 0.866 (0.030)
+Average F1: 0.926 (0.018)
+
+
+Runtime to fit SVM model: 0:00:01.574392
+
+
+Runtime to predict class labels: 0:00:00.372768
+
+
+TEST METRICS
+Accuracy: 0.926
+Precision: 0.995
+Recall: 0.857
+F1: 0.921
+
+
+##############################################################
+DEPRESSION OUTPUT ############################################
+
+
+TRAINING METRICS
+Average runtime: 94497.277
+Average accuracy: 0.902 (0.003)
+Average precision: 0.954 (0.004)
+Average recall: 0.845 (0.005)
+Average F1: 0.897 (0.003)
+
+
+Runtime to fit SVM model: 2 days, 22:29:03.911265
+
+
+Runtime to predict class labels: 2:07:24.333365
+
+
+TEST METRICS
+Accuracy: 0.904
+Precision: 0.954
+Recall: 0.848
+F1: 0.898
+
+
+##############################################################
+ANXIETY OUTPUT ############################################
+
+
+TRAINING METRICS
+Average runtime: 31304.678
+Average accuracy: 0.937 (0.002)
+Average precision: 0.977 (0.002)
+Average recall: 0.895 (0.004)
+Average F1: 0.934 (0.002)
+
+
+Runtime to fit SVM model: 1 day, 13:47:46.633529
+
+
+Runtime to predict class labels: 1:27:17.638259
+
+
+TEST METRICS
+Accuracy: 0.938
+Precision: 0.980
+Recall: 0.894
+F1: 0.935
+
+
+##############################################################
+SUICIDE OUTPUT ############################################
+
+
+TRAINING METRICS
+Average runtime: 46528.100
+Average accuracy: 0.902 (0.002)
+Average precision: 0.956 (0.003)
+Average recall: 0.842 (0.006)
+Average F1: 0.896 (0.002)
+
+
+Runtime to fit SVM model: 1 day, 17:57:09.878939
+
+
+Runtime to predict class labels: 2:14:14.105985
+
+
+TEST METRICS
+Accuracy: 0.905
+Precision: 0.959
+Recall: 0.847
+F1: 0.899
+
+##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
+SVM classification of suicide: FINISHED!
+
+
+##############################################################
+SVM CLASSIFICATION OF DASS - PRIMARY #########################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
+SVM classification of suicide: FINISHED!##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+##############################################################
+SVM CLASSIFICATION OF DASS - GROUND TRUTH ####################
+
+
+SVM classification of depression: FINISHED!
+
+
+SVM classification of anxiety: FINISHED!
+
+
+SVM classification of stress: FINISHED!
+
+
+SVM classification of suicide: FINISHED!
+
+
+
