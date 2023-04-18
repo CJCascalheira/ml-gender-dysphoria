@@ -44,6 +44,10 @@ truth_y_test = pd.read_csv(my_path + '/data/results/confusion_matrix_data/truth_
 truth_x_train1 = truth_x_train.drop(['Unnamed: 0', 'index'], axis=1)
 truth_x_test1 = truth_x_test.drop(['Unnamed: 0', 'index'], axis=1)
 
+# Drop first row on y data
+truth_y_train = truth_y_train.iloc[1:]
+truth_y_test = truth_y_test.iloc[1:]
+
 # Get the feature names
 feature_names = truth_x_train1.columns
 
@@ -52,6 +56,10 @@ truth_x_train1 = truth_x_train1.values
 truth_x_test1 = truth_x_test1.values
 truth_y_train1 = truth_y_train[1].values
 truth_y_test1 = truth_y_test[1].values
+
+# Convert to integer
+truth_y_train1 = truth_y_train1.astype(int)
+truth_y_test1 = truth_y_test1.astype(int)
 
 # Instantiate the standard scaler
 sc = StandardScaler()
@@ -159,6 +167,9 @@ feature_names_df = (
 
 # Top ten features
 print(feature_names_df.iloc[0:10, :])
+
+# Save the feature importance data frame
+feature_names_df.to_csv(my_path + '/data/results/feature_selection/all_features_by_importance.csv')
 
 #endregion
 

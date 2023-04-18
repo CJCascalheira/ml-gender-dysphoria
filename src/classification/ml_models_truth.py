@@ -77,7 +77,7 @@ sc = StandardScaler()
 
 # Standardize the feature matrix
 truth_x_train = sc.fit_transform(truth_x_train)
-truth_x_test = sc.transform((truth_x_test))
+truth_x_test = sc.transform(truth_x_test)
 
 # Initialize k-fold cross-validation
 kfold = KFold(n_splits=10, random_state=1, shuffle=True)
