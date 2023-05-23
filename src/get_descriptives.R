@@ -8,6 +8,7 @@ df_truth <- read_csv("data/cleaned/with_features/df_truth.csv")
 df_truth %>%
   summarize(
     m_words = mean(WC),
+    sd_words = sd(WC),
     med_words = median(WC),
     min_words = min(WC),
     max_words = max(WC)
